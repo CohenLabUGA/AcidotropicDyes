@@ -19,14 +19,19 @@ Finally, the data necessary for supplemental figures relating to grazing on the 
 ## R Scripts
 Various R scripts within an R project were created to process data, make figures, and run statistical analyses. 
 
-Figure 1 was made using [Maps.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Maps.R)
+Maps of each cruise transect seen in Figure 1 was made using [Maps.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Maps.R)
 
+Acidotropic dye staining of cultures seen in Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R)
 
-Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R)
+Fluoresence data seen in Figure 3 and supplemental table 2 were made using [FluorescenceTable.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FluoresenceTable.R)
 
-Figure 3 and supplemental table 2 were made using [FluorescenceTable.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FluoresenceTable.R)
+FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPDataWrangling.R) and LysoTracker data was processed for the CCS cruise using [CCS_LysoTrackerProcess.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCS_LysoTrackerProcess.R) and for the NES cruise [NES_LysoTracker_Process.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_LysoTracker_Process.R). 
 
-FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPDataWrangling.R) and LysoTracker data was processed for the CCS cruise using [CCS_LysoTrackerProcess.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCS_LysoTrackerProcess.R) and for the NES cruise [NES_LysoTracker_Process.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_LysoTracker_Process.R). Community composition on each cruise was plotted using [CommunityDepth.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CommunityDepth.R) with statistics run in [CruiseCommunityStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CruiseCommunityStats.R). Mixotroph proportions and concentrations were plotted using [MixotrophGraphs_Fig5Supp9Supp10.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs_Fig5Supp9Supp10.R). RNA and iron manipulation expeirment data were plotted using [FeIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FeIncubations_RNA.R). 
+Community composition on each cruise seen in Figure 4 was plotted using [CommunityDepth.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CommunityDepth.R) with statistics run in [CruiseCommunityStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CruiseCommunityStats.R). 
 
-Finally, supplemental grazing data for the mixotrophs was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
+Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5, Supplemental figure 9, and Supplemental figure 10 were plotted using [MixotrophGraphs_Fig5Supp9Supp10.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs_Fig5Supp9Supp10.R). 
+
+Fe manipulation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 11, and Supplemental Figure 12, were plotted using [FeIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FeIncubations_RNA.R). 
+
+Finally, supplemental grazing data for the mixotrophs (Supplemental Figures 2 and 3) was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise (Supplemental Figure 5) were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
 
