@@ -1,3 +1,5 @@
+# ---- Load Required Libraries ----
+# These packages are used for data cleaning, summarizing, visualization, and table export.
 library(dplyr)
 library(readxl)
 library(tidyr)
@@ -6,10 +8,17 @@ library(gt)
 library(RColorBrewer)
 library(patchwork)
 
-# Load in data for fluroesence information
+# ===================================
+# PART 1: Fluorescence Data Wrangling
+# ===================================
+
+# ---- Load raw fluorescence data ----
+# Sheet contains mean and peak fluorescence for individual replicates
 data <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
   filter(Stain %in% c("Control", "Tracker"))
-# LysoTracker data load in and calculate av and std of biological replicates
+
+# ---- Load and summarize LysoTracker biological replicate data ----
+# Summarize percent of stained cells and biological replicate count for each culture data load in and calculate av and std of biological replicates
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
   group_by(Name, Place, Metabolism, Type) %>%
   dplyr:: summarise(
@@ -20,7 +29,10 @@ trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
   mutate(percent=mean_Lyso*100, std=std*100)
 trackerdata$Culture <- trackerdata$Name
 
-# Create a summary table from the fluoresence data
+# =========================================
+# PART 2: Summarize Fluorescence Intensities
+# =========================================
+# ---- Calculate mean/SD of fluorescence changes between Control and Tracker staining ----
 summary_table <- data %>%
   select(Culture, Replicate, Stain, Mean, Peak) %>% 
   pivot_wider(names_from = Stain, values_from = c(Mean, Peak)) %>% 
@@ -43,10 +55,14 @@ summary_table <- data %>%
     Peak_Change_Avg  = mean(Peak_Change, na.rm = TRUE),
     Peak_Change_SD   = sd(Peak_Change, na.rm = TRUE)) 
 
-# Merge summary dataframe and LysoTracker staining data
+# ---- Merge fluorescence and staining data ----
 merged_data <- left_join(summary_table, trackerdata, by = "Culture") 
 
-# Create a table with the data
+# =========================================
+# PART 3: Generate Summary Table for Manuscript
+# =========================================
+
+# ---- Format data for display ----
 table <- merged_data %>%
   mutate(
     Mean_Display_Tracker = paste0(round(Mean_Tracker_Avg, 2), " ± ", round(Mean_Tracker_SD, 2)),
@@ -70,10 +86,13 @@ table <- merged_data %>%
     Change_Peak_Display = "Stained - Control Peak Fluroesence", 
     DisplayPercent = "Proportion Stained")
 table
-
+# ---- Save summary table as image ----
 gtsave(table, filename = "Figures/Table2.png")
 
-# Figure 3 
+# =========================================
+# PART 4: Generate Fluorescence Change Plot
+# =========================================
+# ---- Scatter plot of mean fluorescence change vs percent stained ----
 meanchange <- ggplot(merged_data, aes(x = Culture, y = Mean_Change_Avg, color=percent)) +
   scale_color_gradientn(colors = c("black", "purple", "yellow3"))+
   geom_point(size = 4) +
@@ -88,7 +107,7 @@ meanchange <- ggplot(merged_data, aes(x = Culture, y = Mean_Change_Avg, color=pe
   scale_y_log10()
 meanchange
 
-# Create a bar plot of Culture Type to correspond to each culture
+# ---- Generate bar plot to show culture types in the same manner as figure 2 ----
 type_bar <- merged_data %>%
   mutate(Culture = factor(Culture, levels = unique(merged_data$Culture)))
 
@@ -105,9 +124,12 @@ type_plot <- ggplot(type_bar, aes(x = factor(Culture, levels=order), y = 1, fill
   theme(
     legend.position = "bottom",
     plot.margin = margin(0, 20, 0, 20), text = element_text(size=16))
+
+# ---- Combine scatter plot and bar plot of culture type----
 combined_plot <- meanchange / type_plot+ 
   plot_layout(heights = c(1, 0.05)) 
 combined_plot
 
+# ---- Save Figure 3 ----
 ggsave("Figures/Figure3.tiff", plot = combined_plot, width = 12, height = 7, units = "in", dpi = 300)
 

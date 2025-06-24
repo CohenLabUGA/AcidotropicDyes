@@ -1,15 +1,21 @@
+# ---- Load Required Libraries ----
 library(readxl)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(cowplot)
 
+# ----------------------------------------------------------
+# Supplemental Figure 3: Grazing bar plots + microscopy image
+# ----------------------------------------------------------
+
+# Read and summarize ingestion rate and FLP data
 df <- read_excel("Data/SupplementalGrazing.xlsx") %>%
   group_by(Culture) %>%
   dplyr::summarise(avingestion=mean(Ingestion), sdingestion=sd(Ingestion), 
                    avpercent=(100*mean(FLPPercent)), sdpercent=(sd(FLPPercent) *100))
 
-
+# A. Plot ingestion rate
 IR <- ggplot(df, aes(x=Culture, y=avingestion)) + 
   geom_bar(stat = "identity", fill="gray18")+
   geom_errorbar(aes(ymin=avingestion - sdingestion, ymax=avingestion+sdingestion), width=0.3) +
@@ -17,6 +23,7 @@ IR <- ggplot(df, aes(x=Culture, y=avingestion)) +
   labs(x="", y=expression(paste("Ingestion Rate (Bacteria ", cell^{'-1'},hour^{-1}, ")"))) 
 IR
 
+# B. Plot percent of cells ingesting FLPs
 percent <- ggplot(df, aes(x=Culture, y=avpercent)) + 
   geom_bar(stat = "identity", fill="gray80")+
   geom_errorbar(aes(ymin=avpercent - sdpercent, ymax=avpercent+sdpercent), width=0.3) +
@@ -24,8 +31,11 @@ percent <- ggplot(df, aes(x=Culture, y=avpercent)) +
   labs(y="Percent of Eating Cells FLP (%)") 
 percent
 
+# C. Add microscopy image
 photo <- cowplot::ggdraw() + 
   cowplot::draw_image("Data/TetraZStack-1.png")
+
+# Combine A and B into left panel
 barplots <- plot_grid(
   IR, percent,
   ncol = 1,
@@ -37,6 +47,7 @@ barplots <- plot_grid(
 )
 barplots
 
+# Final layout: barplots (left) + image (right)
 final_figure <- plot_grid(
   barplots, photo,
   ncol = 2,
@@ -47,9 +58,15 @@ final_figure <- plot_grid(
 )
 print(final_figure)
 
+# Save full supplemental figure
 ggsave("Figures/Supp3.png", final_figure, width = 10, height = 6, dpi = 300)
 
-#### Supplemental Figure 2 ####
+
+# ----------------------------------------------------------
+# Supplemental Figure 2: Southern Ocean Mixotroph Cultures
+# ----------------------------------------------------------
+
+# Read and summarize ingestion rate data for SO mixotrophs
 suppfiguredf <- read_excel("Data/SupplementalGrazing.xlsx", sheet="SOmixos") %>%
   group_by(Culture) %>%
   dplyr::summarise(AvIR=mean(IngestionRate), sdIR=sd(IngestionRate)) %>% 
@@ -58,11 +75,13 @@ suppfiguredf <- read_excel("Data/SupplementalGrazing.xlsx", sheet="SOmixos") %>%
     Culture == "MA" ~ "M. antarctica",
     Culture == "PT" ~ "P. tychotreta"))
 
+# Create bar plot of ingestion rate
 somixos <- ggplot(suppfiguredf, aes(x=Culture, y=AvIR)) + 
   geom_bar(stat = "identity", color="gray18")+
   geom_errorbar(aes(ymin=AvIR - sdIR, ymax=AvIR+sdIR), width=0.3) +
   theme_bw() + 
   labs(y=expression(paste("Ingestion Rate (Bacteria ", cell^{'-1'},hour^{-1}, ")"))) 
 
+# Save figure
 ggsave("Figures/Supp2.png", somixos, width = 6, height = 6, dpi = 300)
 

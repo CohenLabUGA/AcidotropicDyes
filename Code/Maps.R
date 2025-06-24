@@ -1,3 +1,4 @@
+# ---- Load required libraries ----
 library(marmap)
 library(rnaturalearth)
 library(rnaturalearthdata)
@@ -5,20 +6,33 @@ library(sf)
 library(dplyr)
 library(ggrepel)
 
+# ========================================
+# PART 1: Load Station Metadata
+# ========================================
+
 nes <- read_excel("Data/StationData.xlsx", sheet="NES")
 ccs <- read_excel("Data/StationData.xlsx", sheet="CCS")
 
+# Load global coastline shapefile
 country <- ne_countries(scale = "medium", returnclass = "sf")
 
+
+# ========================================
+# PART 2: CCS Map Plotting
+# ========================================
+
+# ---- Download and process bathymetry for CCS region ----
 ccsbathy <-getNOAA.bathy(lon1=-127, lon2=-110, lat1=34, lat2=50, resolution = 1)
 
 bat_xyz <- as.xyz(ccsbathy)
 ccs$Long_deg <- as.numeric(ccs$Long_deg)
 
+# ---- Add location of iron manipulation experiment ----
 incubation <- data.frame(
   lon = -124.552,
   lat = 43.0452)
 
+# ---- Build CCS map ----
 ccsplot <- ggplot() + 
   geom_sf(data = country) +
   geom_tile(data = bat_xyz, aes(x = V1, y = V2, fill = -V3)) +
@@ -51,8 +65,15 @@ ccsplot <- ggplot() +
     seed = 42)
 ccsplot
 
+# ========================================
+# PART 3: NES Map Plotting
+# ========================================
+
+# ---- Download and process bathymetry for NES region ----
 nesbathy <-getNOAA.bathy(lon1=-69, lon2=-75, lat1=38, lat2=45, resolution = 1)
 bat_xyz <- as.xyz(nesbathy)
+
+# ---- Build NES map ----
 nesplot <- ggplot() + 
   geom_sf(data = country) +
   geom_tile(data = bat_xyz, aes(x = V1, y = V2, fill = -V3)) +
@@ -82,5 +103,9 @@ nesplot <- ggplot() +
     seed = 42)
 nesplot
 
+
+# ========================================
+# PART 4: Combine and Save Plot
+# ========================================
 maps <- grid.arrange(nesplot, ccsplot, nrow=1)
 ggsave("Figures/Figure1.tiff", plot = maps, width = 10, height = 7, units = "in", dpi = 300)

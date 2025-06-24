@@ -1,3 +1,5 @@
+# ---- Load Required Libraries ----
+# These packages are used for data manipulation, plotting, and reading Excel files
 library(gtools)
 library(grid)
 library(readxl)
@@ -9,8 +11,17 @@ library(tidyr)
 library(stringr)
 library(dplyr)
 
+
+# ---- Read Raw Flow Cytometry Data ----
+# Data collected from the New England Shelf LysoTracker experiments.
+# The file contains measurements of nanoeukaryote populations with and without LysoTracker staining
+# as well as synechococcus, picoeukaryotes, and heterotrophic nanoeukaryotes
 df <- read_excel("Data/20241205_NESLysoTrackerRaw.xlsx")
 
+# ---- Step 1: Summarize Unstained Community Composition ----
+# For samples where no LysoTracker was added (Lyso == "no"),
+# we summarize average and standard deviation of various community groups (Synechococcus, picoeukaryotes, nanoeukaryotes
+# across each technical duplicate pair. 
 community <- df %>%
   filter(LysoAdded=="No") %>%
   group_by(Station, Depth) %>%
@@ -18,10 +29,12 @@ community <- df %>%
                    avpico=mean(picoeuk), sdpico=sd(picoeuk), 
                    avnano=mean(nanoeuk), sdnano=sd(nanoeuk))
 
-duplicates <- df %>%
-  group_by(Station, Depth, Rep, LysoAdded, Time) %>%
-  summarise(count = n(), .groups = "drop") %>%
-  filter(count > 1)
+# ---- Step 2: Calculate LysoTracker-Induced Changes in Mixotrophy and Heterotrophy ----
+#   - heterotrophic concentration (hetero)
+#   - percent of nanoeukaryotes that are mixotrophic (percentmixo)
+#   - number of stained nanoeukaryotes
+# Differences are calculated per replicate between LysoTracker-treated (yes) and untreated (no) samples.
+# and then averaged across technical duplicates. 
 
 mixohetero <- df %>%
   mutate(percentmixo=(green/(green+nanoeuk))) %>%
@@ -37,6 +50,12 @@ mixohetero <- df %>%
                    avpercent=mean(percentmixo_diff), sdpercent=sd(percentmixo_diff), 
                    avmixo=mean(stainednanoeuks_diff), sdmixo=sd(stainednanoeuks_diff))
 
+# ---- Step 3: Combine Community and Mixotrophy Data ----
+# Merge baseline community data and experimental data
+
 merged <- merge(community, mixohetero)
+
+# ---- Step 4: Export Final Summarized Dataset ----
+# This file includes both community composition (unstained) and LysoTracker treatments
 
 write.csv(merged, "Data/20241205_NESLysoTrackerProcessed.csv")

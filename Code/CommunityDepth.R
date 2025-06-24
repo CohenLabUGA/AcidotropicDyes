@@ -1,3 +1,6 @@
+# ---- Load Required Libraries ----
+# These packages are used for data reading, manipulation, and plotting.
+
 library(gtools)
 library(grid)
 library(readxl)
@@ -10,35 +13,38 @@ library(stringr)
 library(dplyr)
 library(RColorBrewer)
 
+# ---- Read in the preprocessed LysoTracker summary data from each cruise ----
+
+# Read in processed summary for New England Shelf cruise
 neslysotracker <- read.csv("Data/20241205_NESLysoTrackerProcessed.csv") %>%
   mutate(Cruise = "New England Shelf")
 
+# Read in processed summary for California Current System cruise
+
 ccslysotracker <-read.csv("Data/20241203_CCSLysoTrackerProcessed.csv") %>%
   mutate(Cruise = "California Current System") %>%
-  dplyr::select(-c(avcrypto, sdcrypto, Light))
+  dplyr::select(-c(avcrypto, sdcrypto, Light))# Drop unshared/unneeded columns for merging
 
-### Merge dfs
+# ---- Combine Datasets and Create Depth Bins ----
+
+# Merge both cruises into a single dataframe
 alllysotracker <- rbind(ccslysotracker, neslysotracker)
+
+# Bin depths into 10-meter intervals from 0–70 m
 alllysotracker$DepthBin <-  cut(alllysotracker$Depth, breaks = seq(0, max(70), by = 10), right = FALSE, 
                         labels = paste(seq(0, max(70) - 10, by = 10), 
                                        seq(10, max(70), by = 10), sep = "-"))
 
+# Set station order for consistent plotting
 alllysotracker$Station <- factor(alllysotracker$Station, 
                          levels = c("1", "2", "3", "4", "5", 
                                     "6", "7", "8", "9", "10", "X"))  
 
-depth_colors <- c(
-  "0-10" = "#B3CDE3",  
-  "10-20" = "#73A8D6", 
-  "20-30" = "#4F81C7", 
-  "30-40" = "#1F4E79",
-  "40-50" = "#103654", 
-  "50-60" = "#5C5C5C", 
-  "60-70" = "#000000")
-
+# Reverse depth bin levels so shallow is at the top of the heatmaps
 alllysotracker$DepthBin <- factor(alllysotracker$DepthBin, levels = rev(levels(alllysotracker$DepthBin)))
 
-#### Heat plots ####
+# ---- Generate Plots for Key Populations ----
+
 nanoeukaryotes <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = avnano)) +
   geom_tile(color = "white") +
   facet_wrap(~Cruise, scales = "free_x") +
@@ -66,6 +72,7 @@ synechococcus <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = av
   theme(text = element_text(size=16) )+
   ggtitle("a)")
 
+# Read in bacteria dataframe from a separate file and do manipulations as above
 bacdf <- read_excel("Data/BacteriaConcentrations.xlsx") 
 bacdf$DepthBin <-  cut(bacdf$Depth, breaks = seq(0, max(70), by = 10), right = FALSE, 
                        labels = paste(seq(0, max(70) - 10, by = 10), 
@@ -85,7 +92,10 @@ bacteria <- ggplot(bacdf, aes(x = Station, y = DepthBin, fill = bacteria)) +
   ggtitle("b)")
 bac
 
+# ---- Combine Plots into a Composite Figure ----
 fig4 <- grid.arrange(synechococcus, bacteria, heterotrophs, nanoeukaryotes)
+# Save the full figure at high resolution for publication
 ggsave("Figures/Figure4.tiff", plot = fig4, width = 15, height = 7, units = "in", dpi = 300)
 
+# ---- Save Merged Dataset for Reuse ----
 write.csv(alllysotracker, "Data/AllCruiseLysoTracker.csv")

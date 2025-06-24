@@ -1,3 +1,4 @@
+# Load required packages
 library(ggplot2)
 library(data.table)
 library(dplyr)
@@ -12,12 +13,19 @@ library(caret)
 library(tidyr)
 library(stringr)
 
+# ----------------------------------------------
+# Step 1: Load and preprocess raw data, 
+  # calculating mixotroph percent and nanoeukaryote concentrations
+# ----------------------------------------------
 df <- read_excel("Data/NES_FLP_FCM.xlsx") %>%
   mutate(Timepoint = factor(Timepoint),
     percentmixo = mixo / (nano + mixo),
     totalnano = nano + mixo)
 
-# Summarized data for all timepoints
+# ----------------------------------------------
+# Step 2: Summarize percent mixotrophs by groups
+# Only for "Ecoli" and "Green" types. Green = microspheres
+# ----------------------------------------------
 summdata <- df %>%
   filter(Type %in% c("Ecoli", "Green")) %>%
   group_by(Place, Station, Time, Type, Timepoint) %>%
@@ -26,7 +34,10 @@ summdata <- df %>%
     sdpercent = sd(percentmixo),
     .groups = "drop")
 
-# T1 - T0 delta calculation for each replicate
+# ----------------------------------------------
+# Step 3: Calculate T1 - T0 change per replicate
+# (delta change in percent mixotrophs between timepoints 1 and 0)
+# ----------------------------------------------
 allcalc <- df %>%
   filter(Type %in% c("Ecoli", "Green")) %>%
   group_by(Station, Place, Time, Type, Rep) %>%
@@ -37,7 +48,9 @@ allcalc <- df %>%
     sdpercent = sd(`1` - `0`, na.rm = TRUE),
     .groups = "drop")
 
-# Day/Night plot data (averaged over replicates)
+# ----------------------------------------------
+# Step 4: Summarize data for Day/Night plots averaged over replicates
+# ----------------------------------------------
 daynight <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
   group_by(Station, Type, Place, Timepoint) %>%
@@ -48,7 +61,10 @@ daynight <- df %>%
     sdmixo = sd(mixo),
     .groups = "drop")
 
-# Average nanoeukaryote abundance (excluding T2)
+
+# ----------------------------------------------
+# Step 5: Calculate average nanoeukaryote abundance (excluding Timepoint 2)
+# ----------------------------------------------
 avnano <- df %>%
   filter(Timepoint != 2, Type %in% c("Ecoli", "Green")) %>%
   group_by(Station, Type, Place) %>%
@@ -57,7 +73,10 @@ avnano <- df %>%
     sdnano = sd(totalnano),
     .groups = "drop")
 
-# Difference T1-T0 and percent contribution
+
+# ----------------------------------------------
+# Step 6: Calculate T1-T0 difference in mixotroph abundance and percent contribution
+# ----------------------------------------------
 daynightsub <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
   group_by(Station, Type, Place, Timepoint) %>%
@@ -72,7 +91,9 @@ daynightsub <- df %>%
   select(Station, Type, Place, percentmixo, Timepoint, Depth) %>%
   drop_na()
 
-# Relabel Type and Place for consistency
+# ----------------------------------------------
+# Step 7: Relabel Type and Place factors for consistency
+# ----------------------------------------------
 relabeller <- function(x) {
   x <- recode(x, "Ecoli" = "E. coli", "Green" = "Microspheres", "DCM" = "SCM")
   return(x)
@@ -89,8 +110,11 @@ daynightsub <- daynightsub %>%
     Type = relabeller(Type),
     Place = relabeller(Place))
 
-# Plot
-coeff <- 40
+
+# ----------------------------------------------
+# Step 8: Create the plot
+# ----------------------------------------------
+coeff <- 40 # scaling factor for secondary axis
 
 suppfig5 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) + 
   geom_bar(stat = 'identity', position = 'dodge', color = 'black') +
@@ -112,4 +136,8 @@ suppfig5 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
   theme(axis.title.y.right = element_text(color = "red"), text = element_text(size = 14)) +
   labs(y = "Concentration of Potential Mixotrophs (cells/mL)", x = "Depth")
 
+
+# ----------------------------------------------
+# Step 9: Save the plot
+# ----------------------------------------------
 ggsave("Figures/Supp5.tiff", suppfig5, width = 10, height = 6, dpi = 300)
