@@ -83,7 +83,7 @@ nesgrazing <- nesflpgrazing %>%
 
 #### CCS wrangling ####
 
-ccsgrazing <- read_excel("~/Desktop/OneDrive/Cruises/PUPCYCLE/MicroscopeCounts/AllMicroscope.xlsx") %>%
+ccsgrazing <- read_excel("Data/CCSRawFLP.xlsx") %>%
   group_by(Station) %>%
   mutate(CSGR=(mixo_cellsmL/red_cellsmL) * (bacteria/(10^5))) %>%
   mutate(nanoBR = ((mixo_cellsmL/red_cellsmL) * mixo_cellsmL * (bacteria/10^5)))%>%
