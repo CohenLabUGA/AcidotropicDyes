@@ -17,3 +17,16 @@ For the CCS transect, RNA data and iron manipulation experiments were also condu
 
 Finally, the data necessary for supplemental figures relating to grazing on the two cruises can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx) with tabs for both Tetraselmis spp. and the Southern Ocean mixotrophs, with the z-stack image in supplemental figure 3 [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/TetraZStack-1.png)
 ## R Scripts
+Various R scripts within an R project were created to process data, make figures, and run statistical analyses. 
+
+Figure 1 was made using [Maps.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Maps.R)
+
+
+Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R)
+
+Figure 3 and supplemental table 2 were made using [FluorescenceTable.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FluoresenceTable.R)
+
+FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPDataWrangling.R) and LysoTracker data was processed for the CCS cruise using [CCS_LysoTrackerProcess.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCS_LysoTrackerProcess.R) and for the NES cruise [NES_LysoTracker_Process.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_LysoTracker_Process.R). Community composition on each cruise was plotted using [CommunityDepth.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CommunityDepth.R) with statistics run in [CruiseCommunityStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CruiseCommunityStats.R). Mixotroph proportions and concentrations were plotted using [MixotrophGraphs_Fig5Supp9Supp10.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs_Fig5Supp9Supp10.R). RNA and iron manipulation expeirment data were plotted using [FeIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FeIncubations_RNA.R). 
+
+Finally, supplemental grazing data for the mixotrophs was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
+
