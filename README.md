@@ -1,16 +1,19 @@
 # Evaluating acidotropic dyes for detecting mixotrophy in protists: insights from cultures and field communities
-### Table of Contents
-
-#[Project Background](#project-background)
-#[Raw Data](#rawdata-1)
-#[R scripts](#r_scripts)
 
 ## Project Background
-Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis, are extremely important for nutrient cycling and the microbial food web. Unfortunately, these organisms are difficult to detect in the natural environment. This study evaluated a tool for measuring mixotrophs in aquatic environments, acidotropic dyes. These dyes are thought to bind to acidic digestion vacuoles and can be identified using flow cytometry. We test these dyes in a suite of lab organisms and then compare them in the field to the community standard for measuring mixotrophs, fluorescently labeled particle incubations. 
+Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis, are extremely important for nutrient cycling and the microbial food web. Unfortunately, these organisms are difficult to detect in the natural environment. This study evaluated a tool for measuring mixotrophs in aquatic environments, acidotropic dyes. These dyes are thought to bind to acidic digestion vacuoles and can be identified using flow cytometry. We test these dyes in a suite of lab organisms and then compare them in the field to the community standard for measuring mixotrophs, fluorescently labeled particle incubations in both the New England Shelf (NES) and California Current System (CCS). 
 
-This repository contains data and code used in analysis on this project. 
-## Raw Data
+This repository contains data and code used in the analysis of this project. 
+## Data
 All raw and processed dataframes used in this analysis are hosted in the folder [Data](https://github.com/CohenLabUGA/AcidotropicDyes/tree/main/Data)
 
+Raw data of culture staining with acidotropic dyes can be found in [CultureLysoData.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CultureLysoData.xlsx), with tabs for LysoTracker, LysoSensor, and LysoTrackerFluorescence giving data for LysoTracker staining & LysoSensor staining data used for Figure 2, and the green fluorescence data used for Figure 3. A table detailing the culture conditions was made using [this](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/Table1.xlsx)  dataset 
 
+The station data for the field samples can be found at [StationData.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/StationData.xlsx), which was used to make Figure 1. Raw flow cytometry data for both cruises can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/20241205_NESLysoTrackerRaw.xlsx) for NES and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/20241203_CCSLysoTrackerRaw.xlsx) for CCS. This data was then processed; the processed form of these data can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/20241205_NESLysoTrackerProcessed.csv) for NES and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/20241203_CCSLysoTrackerProcessed.csv) for CCS. A combined datasheet with all field LysoTracker data can be found at [AllCruiseLysoTracker.csv](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/AllCruiseLysoTracker.csv). 
+
+Similarly, FLP incubations had both raw and processed data. The NES had both microscopy and flow cytometry FLP analysis, found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/NES_FLP_Microscopy.xlsx) and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/NES_FLP_FCM.xlsx) respectively. These were processed to make [NES_FLP_Processed.csv](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/NES_FLP_Processed.csv). Only microscopy was available for the CCS FLP analysis. Raw data can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CCSRawFLP.xlsx) and processed data [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CCS_FLP_Processed.csv). All FLP data was combined into the file [AllFLPData.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/AllFLPData.xlsx). For grazing calculations, bacteria was needed. NES specific data can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/NESBacteria.xlsx), and all bacteria data can be found at [BacteriaConcentrations.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/BacteriaConcentrations.xlsx). 
+
+For the CCS transect, RNA data and iron manipulation experiments were also conducted. The RNA taxonomy information can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CubiTaxa.xlsx) for the iron manipulation experiment and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/station_protist_taxonomy.csv) for the stations. 
+
+Finally, the data necessary for supplemental figures relating to grazing on the two cruises can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx) with tabs for both Tetraselmis spp. and the Southern Ocean mixotrophs, with the z-stack image in supplemental figure 3 [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/TetraZStack-1.png)
 ## R Scripts
