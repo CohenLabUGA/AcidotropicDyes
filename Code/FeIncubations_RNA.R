@@ -84,7 +84,7 @@ lysotrackerplot <- ggplot(df_aov, aes(x= factor(treatment, levels=order), y = em
   geom_bar(position = 'dodge', stat = 'identity') +
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), position = position_dodge(.9), width = 0.2) + 
   geom_text(aes(label = cld, y = upper.CL), vjust = -0.5, position = position_dodge(0.9),size = 3)+
-  labs(x="", y="Percent of Grazing\nPhototrophs (LysoTracker)", fill="Treatment")+
+  labs(x="", y="Percent of Potentially Mixotrophic \nPhototrophs (LysoTracker)", fill="Treatment")+
   theme_classic(base_size = 14)+
   scale_fill_manual(values = custom_colors) +
   facet_grid(~timepoint) +
