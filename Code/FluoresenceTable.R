@@ -111,13 +111,15 @@ meanchange
 type_bar <- merged_data %>%
   mutate(Culture = factor(Culture, levels = unique(merged_data$Culture)))
 
+resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
+
 color <- c("Diatom"= "#CAB2D6", 
            "Coccolithophore"="#33A02C",
            "Chlorophyte"="#A6CEE3",
            "Prasinophyte"="#B15928",
            "Cryptophyte"="#FF7F00")
 
-type_plot <- ggplot(type_bar, aes(x = factor(Culture, levels=order), y = 1, fill = Type)) +
+type_plot <- ggplot(type_bar, aes(x = factor(Culture, levels = resultsorder), y = 1, fill = Type)) +
   geom_tile() +
   scale_fill_manual(values = color)+
   theme_void() +

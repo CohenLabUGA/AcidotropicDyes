@@ -94,3 +94,37 @@ sensor
 final <- grid.arrange(tracker, sensor)
 # ---- Save as TIFF for publication ----
 ggsave("Figures/Figure2.tiff", plot = final, width = 10, height = 10, units = "in", dpi = 300)
+
+
+## Table
+
+trackerdata_mod <- trackerdata %>%
+  mutate(Source = paste0("LysoTracker_", Cytometer))
+
+sensordata_mod <- sensordata %>%
+  mutate(Cytometer=="CytPix")%>%
+  mutate(Source = "LysoSensor")
+
+combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
+  select(Name, Source, percent, std, n_bio) %>%
+  mutate(
+    value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std)
+  )
+
+wide_df <- combined_df %>%
+  select(Name, Source, value) %>%
+  pivot_wider(names_from = Source, values_from = value)
+
+table <- wide_df %>%
+  arrange(Name) %>%
+  gt() %>%
+  cols_label(
+    Name = "Culture Name",
+    `LysoTracker_CytPix` = "LysoTracker (CytPix)",
+    `LysoTracker_Guava` = "LysoTracker (Guava)",
+    LysoSensor = "LysoSensor (CytPix)"
+  ) %>%
+  tab_header(title = "Staining Summary ((n); Mean ± StDev)")
+table
+
+gtsave(table, "Figures/Table2.png")
