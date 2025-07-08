@@ -1,3 +1,4 @@
+## Load in necessary packages ##
 library(dplyr)
 library(readxl)
 library(tidyr)
@@ -5,7 +6,8 @@ library(gt)
 library(tibble)
 library(glue)
 
-
+#### Making of Table 1 ####
+## Load in dataset for Table 1 and formate with superscripts##
 Table1 <- read_excel("Data/Table1.xlsx") %>%
   mutate(
     Acquisition = case_when(
@@ -30,7 +32,7 @@ Table1 <- read_excel("Data/Table1.xlsx") %>%
       Culture == "Pyramimonas tychotreta (I-9 Pyram)" ~ glue("{Metabolism}<sup>3</sup>"),
       TRUE ~ Metabolism))
 
-
+## Format into gt table with sources at the bottom ##
 gt_table <- Table1 %>%
   gt() %>%
   fmt_markdown(columns = vars(Acquisition, Metabolism)) %>%
@@ -56,13 +58,17 @@ gt_table <- Table1 %>%
 
 gt_table
 
+# Save table #
 gtsave(gt_table, filename = "Figures/Table1.png", expand = 150, vwidth = 1800, vheight=3200)
 
+#### Making of supplemental table 1 ####
+# Create data frame
 supptable1 <- tibble::tibble(
   Station = c("1", "2", "4", "7", "9", "X"),
   `BioRepSUR` = c(1, 1, 2, 1, 1, 1),
   `BioRepSCM` = c(1, 1, 1, 2, 2, 1))
 
+# Format into gt table
 gt_rep_table <- supptable1 %>%
   gt() %>%
   cols_label(Station = "Station",
@@ -72,5 +78,6 @@ gt_rep_table <- supptable1 %>%
 
 gt_rep_table
 
+# Save table
 gtsave(gt_rep_table, filename = "Figures/SuppTable1.png")
 
