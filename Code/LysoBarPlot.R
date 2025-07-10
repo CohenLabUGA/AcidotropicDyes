@@ -31,7 +31,7 @@ color <- c("Diatom"= "#CAB2D6",
 
 # ---- Load LysoTracker data ----
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
-  group_by(Name, Place, Metabolism, Type) %>%
+  group_by(Name, FullNames, Place, Metabolism, Type) %>%
   dplyr:: summarise(
     mean_Lyso = mean(Lyso, na.rm = TRUE),
     n_bio = n(),
@@ -41,7 +41,7 @@ trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
 
 # ---- Load LysoSensor data ----
 sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoSensor")  %>%
-  group_by(Name, Place, Metabolism, Type) %>%
+  group_by(Name, FullNames, Place, Metabolism, Type) %>%
   dplyr::summarise(
     mean_Lyso = mean(AvSensor, na.rm = TRUE),
     n_bio = n(),
@@ -95,8 +95,18 @@ final <- grid.arrange(tracker, sensor)
 # ---- Save as TIFF for publication ----
 ggsave("Figures/Figure2.tiff", plot = final, width = 10, height = 10, units = "in", dpi = 300)
 
-
-## Table
+# ========================================
+# Put data in a table
+# ========================================
+# Format dataframes
+trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
+  group_by(Name, FullNames, Place, Metabolism, Type, Cytometer) %>%
+  dplyr:: summarise(
+    mean_Lyso = mean(Lyso, na.rm = TRUE),
+    n_bio = n(),
+    std=sd(Lyso),
+    .groups = "drop") %>%
+  mutate(percent=mean_Lyso*100, std=std*100)
 
 trackerdata_mod <- trackerdata %>%
   mutate(Source = paste0("LysoTracker_", Cytometer))
@@ -105,21 +115,24 @@ sensordata_mod <- sensordata %>%
   mutate(Cytometer=="CytPix")%>%
   mutate(Source = "LysoSensor")
 
+# Combine lysotracker and lysosensor data
 combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
-  select(Name, Source, percent, std, n_bio) %>%
+  select(FullNames, Source, percent, std, n_bio) %>%
   mutate(
     value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std)
   )
 
+# Pivot dataframe wider 
 wide_df <- combined_df %>%
-  select(Name, Source, value) %>%
+  select(FullNames, Source, value) %>%
   pivot_wider(names_from = Source, values_from = value)
 
+# Format table
 table <- wide_df %>%
-  arrange(Name) %>%
+  arrange(FullNames) %>%
   gt() %>%
   cols_label(
-    Name = "Culture Name",
+    FullNames = "Culture Name",
     `LysoTracker_CytPix` = "LysoTracker (CytPix)",
     `LysoTracker_Guava` = "LysoTracker (Guava)",
     LysoSensor = "LysoSensor (CytPix)"
@@ -127,4 +140,6 @@ table <- wide_df %>%
   tab_header(title = "Staining Summary ((n); Mean ± StDev)")
 table
 
+# Save table
 gtsave(table, "Figures/Table2.png")
+
