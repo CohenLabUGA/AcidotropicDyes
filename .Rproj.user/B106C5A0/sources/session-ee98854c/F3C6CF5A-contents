@@ -1,0 +1,118 @@
+library(readxl)
+library(ggplot2)
+library(minpack.lm)
+library(dplyr)
+library(tidyr)
+setwd("~/Desktop/OneDrive/Lab/CultureExperiments")
+ETR_data <- read_excel("ETR.xlsx") %>%
+  filter(`Use`=="Yes") %>%
+  filter(ETR>0)
+library(minpack.lm)
+library(ggplot2)
+library(dplyr)
+
+# ETR fitting function
+ETRfit_plot <- function(data, culture, rep, media, samplestat, model_type = "webb",
+                        etr_col = "ETR", par_col = "PAR") {
+  
+  # Validate columns exist
+  if (!all(c(etr_col, par_col) %in% names(data))) {
+    cat("Missing required columns in dataset for model fitting.\n")
+    return(NULL)
+  }
+  
+  # Remove NA values
+  data <- data %>%
+    filter(!is.na(.data[[etr_col]]), !is.na(.data[[par_col]]))
+  
+  # Ensure numeric
+  data[[etr_col]] <- as.numeric(data[[etr_col]])
+  data[[par_col]] <- as.numeric(data[[par_col]])
+  
+  # Check for sufficient data
+  if (nrow(data) < 3) {
+    cat("Skipping model fitting: not enough data points.\n")
+    return(NULL)
+  }
+  
+  ETR <- data[[etr_col]]
+  PAR <- data[[par_col]]
+  
+  tryCatch({
+    if (model_type == "webb") {
+      # Webb model: ETR = ETRmax * (1 - exp(-alpha * PAR / ETRmax))
+      model <- nlsLM(ETR ~ ETRmax * (1 - exp(-alpha * PAR / ETRmax)),
+                     start = list(ETRmax = max(ETR), alpha = 0.01),
+                     lower = c(0, 0), data = data)
+    } else if (model_type == "platt") {
+      # Platt model: ETR = Pmax * (1 - exp(-alpha * PAR / Pmax)) * exp(-beta * PAR / Pmax)
+      model <- nlsLM(ETR ~ Pmax * (1 - exp(-alpha * PAR / Pmax)) * exp(-beta * PAR / Pmax),
+                     start = list(Pmax = max(ETR), alpha = 0.01, beta = 0.01),
+                     lower = c(0, 0, 0), data = data)
+    } else {
+      cat("Unknown model type:", model_type, "\n")
+      return(NULL)
+    }
+    
+    # Generate prediction curve
+    par_seq <- seq(min(PAR), max(PAR), length.out = 100)
+    pred_data <- data.frame(PAR = par_seq)
+    pred_data$ETR <- predict(model, newdata = pred_data)
+    
+    # Plot
+    p <- ggplot(data, aes(x = PAR, y = ETR)) +
+      geom_point(size = 3) +
+      geom_line(data = pred_data, aes(x = PAR, y = ETR), color = "red") +
+      ggtitle(paste(culture, rep, media, samplestat, model_type)) +
+      theme_minimal()
+    
+    return(list(model = model, plot = p))
+    
+  }, error = function(e) {
+    cat("Model fitting error for", culture, rep, media, samplestat, model_type, ":", e$message, "\n")
+    return(NULL)
+  })
+}
+
+# Culture processor
+process_culture <- function(culture_name, media_types, sample_states) {
+  culture_data <- subset(ETR_data, Culture == culture_name)
+  replicates <- unique(culture_data$Rep)
+  results <- list()
+  
+  for (rep in replicates) {
+    for (media in media_types) {
+      for (samplestat in sample_states) {
+        rep_data <- subset(culture_data, Rep == rep & Media == media & SampleState == samplestat)
+        cat("Processing Culture:", culture_name, "- Replicate:", rep, "- Media:", media, "- Sample State:", samplestat, "\n")
+        
+        web_result <- ETRfit_plot(rep_data, culture_name, rep, media, samplestat, model_type = "webb")
+        if (!is.null(web_result)) {
+          results[[paste(culture_name, rep, media, samplestat, "webb", sep = "_")]] <- web_result
+          cat("Webb Model Summary:\n")
+          print(summary(web_result$model))
+          print(web_result$plot)
+        } else {
+          cat("Webb model fitting failed for Culture:", culture_name, "- Replicate:", rep, "- Media:", media, "- Sample State:", samplestat, "\n")
+        }
+        
+        platt_result <- ETRfit_plot(rep_data, culture_name, rep, media, samplestat, model_type = "platt")
+        if (!is.null(platt_result)) {
+          results[[paste(culture_name, rep, media, samplestat, "platt", sep = "_")]] <- platt_result
+          cat("Platt Model Summary:\n")
+          print(summary(platt_result$model))
+          print(platt_result$plot)
+        } else {
+          cat("Platt model fitting failed for Culture:", culture_name, "- Replicate:", rep, "- Media:", media, "- Sample State:", samplestat, "\n")
+        }
+      }
+    }
+  }
+  
+  return(results)
+}
+
+# Process each culture
+process_culture("PT", "Low Fe", "addbk")
+process_culture("GC", "Low Fe", "addbk")
+

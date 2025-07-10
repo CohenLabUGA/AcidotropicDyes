@@ -21,6 +21,8 @@ Various R scripts within an R project were created to process data, make figures
 
 Maps of each cruise transect seen in Figure 1 was made using [Maps.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Maps.R)
 
+Tables 1 and supplementary 1 were created using [Tables.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Tables.R)
+
 Acidotropic dye staining of cultures seen in Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R)
 
 Fluoresence data seen in Figure 3 and supplemental table 2 were made using [FluorescenceTable.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FluoresenceTable.R)
@@ -32,6 +34,7 @@ Community composition on each cruise seen in Figure 4 was plotted using [Communi
 Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5, Supplemental figure 9, and Supplemental figure 10 were plotted using [MixotrophGraphs_Fig5Supp9Supp10.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs_Fig5Supp9Supp10.R). Significant differences were calculated in the file [FLPStatistics.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPStatistics.R). 
 
 Fe manipulation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 11, and Supplemental Figure 12, were plotted using [FeIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FeIncubations_RNA.R). 
+
 
 Finally, supplemental grazing data for the mixotrophs (Supplemental Figures 2 and 3) was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise (Supplemental Figure 5) were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
 
