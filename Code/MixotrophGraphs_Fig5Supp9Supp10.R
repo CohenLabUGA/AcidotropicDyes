@@ -124,12 +124,12 @@ lysoconcentration
 
 # ---- Extract legend from one plot ----
 legend <- ggplot(flpdf, aes(x = Station, y = avpercent, color = Depth, shape=Method)) +
-  geom_point() +
+  geom_point(size=4) +
   theme_bw()+
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
   scale_shape_manual(values = c("Microscopy" = 15,
                                 "FlowCytometry" = 16))+
-  theme(text = element_text(size=18) )
+  theme(text = element_text(size=18))
 
 legend <- get_legend(legend)
 
