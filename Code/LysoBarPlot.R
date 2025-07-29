@@ -60,14 +60,15 @@ tracker <- ggplot(trackerdata, aes(x = factor(Name, levels = resultsorder), y = 
     aes(fill = Type))+
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
-  theme_bw() +
+  theme_classic() +
   labs(x = "", y = "Proportion Stained LysoTracker", fill='Group') +
   ggtitle("a)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = margin(10, 10, 30, 10),
     text = element_text(size=16), 
     legend.position = "none") +
-  scale_fill_manual(values = color)
+  scale_fill_manual(values = color)+
+  scale_y_continuous(limits = c(-5, 110), breaks = seq(0, 100, 25))
 tracker
 
 # ---- LysoSensor Barplot ----
@@ -76,14 +77,15 @@ sensor <- ggplot(sensordata, aes(x = factor(Name, levels = resultsorder), y = pe
     aes(fill = Type))+
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
-  theme_bw() +
+  theme_classic() +
   labs(x = "", y = "Proportion Stained LysoSensor", fill='Group') +
   ggtitle("b)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = margin(10, 10, 30, 10),
     text = element_text(size=16), 
     legend.position = "bottom") +
-  scale_fill_manual(values = color)
+  scale_fill_manual(values = color)+
+  scale_y_continuous(limits = c(-5, 110), breaks = seq(0, 100, 25))
 sensor
 
 # ========================================
