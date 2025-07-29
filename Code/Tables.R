@@ -59,8 +59,7 @@ gt_table <- Table1 %>%
 gt_table
 
 # Save table #
-gtsave(gt_table, filename = "Figures/Table1.png", expand = 150, vwidth = 1800, vheight=3200)
-
+gtsave(gt_table, filename = "Figures/Table1.png", vwidth = 1800, vheight = 3200, zoom = 3)
 #### Making of supplemental table 1 ####
 # Create data frame
 supptable1 <- tibble::tibble(
