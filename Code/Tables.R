@@ -62,13 +62,13 @@ gt_table
 gtsave(gt_table, filename = "Figures/Table1.png", vwidth = 1800, vheight = 3200, zoom = 3)
 #### Making of supplemental table 1 ####
 # Create data frame
-supptable1 <- tibble::tibble(
+supptable2 <- tibble::tibble(
   Station = c("1", "2", "4", "7", "9", "X"),
   `BioRepSUR` = c(1, 1, 2, 1, 1, 1),
   `BioRepSCM` = c(1, 1, 1, 2, 2, 1))
 
 # Format into gt table
-gt_rep_table <- supptable1 %>%
+gt_rep_table <- supptable2 %>%
   gt() %>%
   cols_label(Station = "Station",
              `BioRepSUR` = "Biological Replicates\nSurface",
@@ -78,5 +78,32 @@ gt_rep_table <- supptable1 %>%
 gt_rep_table
 
 # Save table
-gtsave(gt_rep_table, filename = "Figures/SuppTable1.png")
+gtsave(gt_rep_table, filename = "Figures/SuppTable2.png")
 
+#### Making of Supplemental Table of Flow Cytometer Values ####
+data <- read_excel("Data/FlowCytometerInfo.xlsx") 
+
+supp1table <- data %>%
+  gt() %>%
+  tab_spanner(label = "Gain and Voltage Settings",
+    columns = c(
+      `Guava Gain (Culture Tests & NES FLP)`,
+      `LysoTracker CCS Cruise`,
+      `LysoTracker NES Cruise`,
+      `Culture Tests CytPix Voltage (V)`)) %>%
+  tab_spanner(label = "Detection Wavelengths",
+    columns = c(
+      `Wavelength CytPix (nm)`,
+      `Wavelength Guava (nm)`)) %>%
+  fmt_missing(
+    columns = everything(),
+    missing_text = "—") %>%
+  tab_header(title = md("**Instrument Settings for Guava EasyCyte and Attune CytPix Flow Cytometers**")) %>%
+  tab_options(
+    table.font.size = px(12),
+    heading.title.font.size = 16) %>%
+  cols_align(align = "center")
+
+supp1table
+
+gtsave(supp1table, filename = "Figures/SuppTable1.png", vwidth = 1500, vheight = 3200, zoom = 3)
