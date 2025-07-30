@@ -5,7 +5,8 @@ library(rnaturalearthdata)
 library(sf)
 library(dplyr)
 library(ggrepel)
-
+library(ggpubr)
+library(readxl)
 # ========================================
 # PART 1: Load Station Metadata
 # ========================================
@@ -22,15 +23,10 @@ country <- ne_countries(scale = "medium", returnclass = "sf")
 # ========================================
 
 # ---- Download and process bathymetry for CCS region ----
-ccsbathy <-getNOAA.bathy(lon1=-127, lon2=-110, lat1=34, lat2=50, resolution = 1)
+ccsbathy <-getNOAA.bathy(lon1=-127, lon2=-110, lat1=35, lat2=46, resolution = 1)
 
 bat_xyz <- as.xyz(ccsbathy)
 ccs$Long_deg <- as.numeric(ccs$Long_deg)
-
-# ---- Add location of iron manipulation experiment ----
-incubation <- data.frame(
-  lon = -124.552,
-  lat = 43.0452)
 
 # ---- Build CCS map ----
 ccsplot <- ggplot() + 
@@ -38,13 +34,11 @@ ccsplot <- ggplot() +
   geom_tile(data = bat_xyz, aes(x = V1, y = V2, fill = -V3)) +
   geom_sf(data = country) +
   coord_sf(xlim = c(-127, -119), 
-           ylim = c(34, 47)) +
+           ylim = c(36, 45)) +
   labs(x = "Longitude", y = "Latitude", fill = "Depth (m)") +
   theme_minimal() +
   geom_point(data=ccs, aes(x=Long_deg, y=Lat_deg), colour ="white", size=5) + 
   geom_point(data=ccs, aes(x=Long_deg, y=Lat_deg), colour ="black", size=2)+
-  geom_point(data = incubation, aes(x = lon, y = lat), 
-             colour = "red", size = 1)+
   ggtitle("b) California Current System") +
   scale_x_continuous(breaks = seq(-127, -119, by = 4))+
   scale_fill_gradientn(
@@ -100,12 +94,14 @@ nesplot <- ggplot() +
     min.segment.length = 0,
     force = 1,
     max.overlaps = Inf,
-    seed = 42)
+    seed = 42) 
 nesplot
 
 
 # ========================================
 # PART 4: Combine and Save Plot
 # ========================================
-maps <- grid.arrange(nesplot, ccsplot, nrow=1)
+maps <- ggarrange(nesplot, ccsplot,
+  nrow = 1,align = "hv",
+  labels = NULL, widths = c(1, 1))
 ggsave("Figures/Figure1.tiff", plot = maps, width = 10, height = 7, units = "in", dpi = 300)
