@@ -11,6 +11,7 @@ library(tidyr)
 library(RColorBrewer)
 library(ggpmisc)
 library(gridExtra)
+library(gt)
 
 # ========================================
 # PART 1: Define Culture Order and Colors
@@ -121,27 +122,38 @@ sensordata_mod <- sensordata %>%
 combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
   select(FullNames, Source, percent, std, n_bio) %>%
   mutate(
-    value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std)
-  )
+    value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std))
 
+# Add in the range of cell concentrations 
+cellconcrange <- read_excel("Data/CultureLysoData.xlsx") %>%
+  group_by(FullNames) %>%
+  dplyr::summarise(cellrange = paste0(round(min(MixoConc, na.rm = TRUE), -1), " – ", round(max(MixoConc, na.rm = TRUE), -1)))
+  
+  
 # Pivot dataframe wider 
 wide_df <- combined_df %>%
   select(FullNames, Source, value) %>%
   pivot_wider(names_from = Source, values_from = value)
 
+table_df <- wide_df %>%
+  left_join(cellconcrange, by = "FullNames")
+
+
 # Format table
-table <- wide_df %>%
+table <- table_df %>%
   arrange(FullNames) %>%
   gt() %>%
   cols_label(
     FullNames = "Culture Name",
     `LysoTracker_CytPix` = "LysoTracker (CytPix)",
     `LysoTracker_Guava` = "LysoTracker (Guava)",
-    LysoSensor = "LysoSensor (CytPix)"
+    LysoSensor = "LysoSensor (CytPix)", 
+    cellrange="Range of Cells Examined"
   ) %>%
   tab_header(title = "Staining Summary ((n); Mean ± StDev)")
 table
 
 # Save table
 gtsave(table, "Figures/Table2.png")
+gtsave(table, filename = "Figures/Table2.png", vwidth = 1500, vheight = 3200, zoom = 3)
 
