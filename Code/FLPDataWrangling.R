@@ -57,7 +57,7 @@ nesgrazing <- merged_df %>%
                    avbac=mean(bacteria), sdbac=sd(bacteria), 
                    avloggrazing=mean(loggrazing), sdloggrazing=sd(loggrazing), 
                    avnanoBR=mean(nanoBR), sdnanoBR=sd(nanoBR)) %>%
-  mutate(Cruise = "New England Shelf") %>%
+  mutate(Cruise = "North East Shelf") %>%
   filter(!(Station == 9 & Place == "DCM")) %>%
   mutate(Depth=Place) %>%
   dplyr::select(!Place)
@@ -105,10 +105,11 @@ ccsgrazing <- read_excel("Data/CCSRawFLP.xlsx") %>%
   group_by(Station) %>%
   mutate(CSGR=(mixo_cellsmL/red_cellsmL) * (bacteria/(10^5))) %>%
   mutate(nanoBR = ((mixo_cellsmL/red_cellsmL) * mixo_cellsmL * (bacteria/10^5)))%>%
+  mutate(loggrazing=log(CSGR)) %>%
   dplyr::summarise(
     avbac=mean(bacteria), sdbac=sd(bacteria), 
     avpercent=mean(percentmixo), sdpercent=sd(percentmixo),
-    avconc=mean(submixoconc), sdconc=sd(submixoconc), 
+    avconc=mean(mixo_cellsmL), sdconc=sd(mixo_cellsmL), 
     avloggrazing=mean(loggrazing), sdloggrazing=sd(loggrazing), 
     avgrazing=mean(CSGR), sdgrazing=sd(CSGR), 
     avnano=mean(red_cellsmL), sdnano=sd(red_cellsmL), 

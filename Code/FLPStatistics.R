@@ -87,14 +87,14 @@ test_grazing <- function(data, variables, method = "kruskal", pairwise = TRUE) {
 # Load merged LysoTracker summary data for both cruises
 flpfcm <- read_excel("Data/AllFLPData.xlsx") %>%
   filter(Cruise == "California Current System" |
-           (Cruise == "New England Shelf" & Method == "FlowCytometry"))
+           (Cruise == "North East Shelf" & Method == "FlowCytometry"))
 
 flpmicroscopy <- read_excel("Data/AllFLPData.xlsx") %>%
   filter(Cruise == "California Current System" |
-           (Cruise == "New England Shelf" & Method == "Microscopy"))
+           (Cruise == "North East Shelf" & Method == "Microscopy"))
 
 nesflp <- read_excel("Data/AllFLPData.xlsx") %>%
-  filter(Cruise == "New England Shelf")
+  filter(Cruise == "North East Shelf")
 
 lysodf <- read.csv("Data/AllCruiseLysoTracker.csv")
 
@@ -182,3 +182,4 @@ range_lyso <- lysodf %>%
                    mixopercent=mean(avpercent), sdpercent=sd(avpercent), 
                    minmixo=min(avmixo), maxmixo=max(avmixo), 
                    minpercent=min(avpercent), maxpercent=max(avpercent))
+

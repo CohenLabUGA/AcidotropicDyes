@@ -28,7 +28,7 @@ lysodf <- read.csv("Data/AllCruiseLysoTracker.csv") %>%
 # Add in placeholder (blank) stations for consistent layout
 missing_stations <- data.frame(
   Station = factor(c("3", "5", "8"), levels = levels(lysodf$Station)),  
-  Cruise = "New England Shelf",  
+  Cruise = "North East Shelf",  
   DepthCode = NA,             
   avpercent = NA,
   sdpercent = NA,
@@ -55,7 +55,7 @@ flpdf$jittered_x  <- jitter(as.numeric(flpdf$Station),  amount = 0.25)
 FLPmixoconc <- ggplot(flpdf, aes(x=jittered_x, y=avconc, color=Depth, shape=Cruise)) + 
   geom_point(size=3) +
   scale_shape_manual(values = c("California Current System" = 15,
-                                "New England Shelf" = 16)) + 
+                                "North East Shelf" = 16)) + 
   facet_wrap(~Cruise, scales="free_x") +
   geom_errorbar(aes(ymin=avconc-sdconc, ymax=avconc+sdconc), width=0.2) +
   labs(y = expression(paste("Mixotroph Concentration FLP ", "(Cells ",mL^{'-1'}, ')')), x="Station") + 
@@ -150,7 +150,7 @@ ggsave("Figures/Figure5.tiff", plot = mixoplot, width = 14, height = 11, units =
 # Supplemental Figure 9: NES Only
 # ========================================
 nesgrazing <- flpdf %>%
-  filter(Cruise=="New England Shelf") %>%
+  filter(Cruise=="North East Shelf") %>%
   mutate(Depth = ifelse(Depth == "DCM", "SCM", Depth))
 
 # ---- Plot grazing rate ----

@@ -78,7 +78,7 @@ nesplot <- ggplot() +
   theme_minimal() +
   geom_point(data=nes, aes(x=Longitude, y=Latitude), colour ="white", size=5) + 
   geom_point(data=nes, aes(x=Longitude, y=Latitude), colour ="black", size=2) + 
-  ggtitle("a) New England Shelf") +
+  ggtitle("a) North East Shelf") +
   scale_fill_gradientn(
     name = "Depth (m)",
     colours = c("#9ecae1", "#3182bd", "#08519c", "navy"),

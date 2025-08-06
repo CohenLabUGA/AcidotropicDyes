@@ -17,7 +17,7 @@ library(RColorBrewer)
 
 # Read in processed summary for New England Shelf cruise
 neslysotracker <- read.csv("Data/20241205_NESLysoTrackerProcessed.csv") %>%
-  mutate(Cruise = "New England Shelf")
+  mutate(Cruise = "North East Shelf")
 
 # Read in processed summary for California Current System cruise
 
@@ -90,7 +90,7 @@ bacteria <- ggplot(bacdf, aes(x = Station, y = DepthBin, fill = bacteria)) +
   theme_classic() +
   theme(text = element_text(size=16) )+
   ggtitle("b)")
-bac
+bacteria
 
 # ---- Combine Plots into a Composite Figure ----
 fig4 <- grid.arrange(synechococcus, bacteria, heterotrophs, nanoeukaryotes)
