@@ -18,7 +18,7 @@ library(cowplot)
 # --------------------------------------------------------
 
 # Read in dataframe
-df <- read.csv("Data/station_protist_taxonomy.csv")
+df <- read.csv("Data/station_protist_taxonomy.csv") 
 df$Station <- as.factor(df$Station)
 
 # Custom color palette for taxonomic groups
@@ -38,12 +38,6 @@ ggsave("Figures/SuppFig11.tiff", plot = stationtaxa, width = 6, height = 6, unit
 # Figure 6a: Effect of Fe treatments on mixotrophy (LysoTracker)
 # --------------------------------------------------------
 
-# Define plotting order and colors
-order <- c("Control", "Iron Addition", "DFB (iron chelator)")
-custom_colors <- c("Control" ="#999999",
-                   "Iron Addition" = "black",
-                   "DFB (iron chelator)" = "gray80")
-
 # Read and format iron incubation data
 feincubations <- read_excel("Data/FeIncubations.xlsx") %>%
   mutate(Timepoint = case_when(
@@ -55,7 +49,8 @@ feincubations <- read_excel("Data/FeIncubations.xlsx") %>%
     Treatment=="control" ~ "Control", 
     Treatment =="dfb" ~"DFB (iron chelator)", 
     Treatment =="iron"~"Iron Addition")) %>%
-  mutate(proportionmixos = proportionmixos *100)
+  mutate(proportionmixos = proportionmixos *100) %>%
+  filter(Treatment=="Control")
 
 # Prepare data for ANOVA 
 data <- data.frame(timepoint = as.factor(feincubations$Timepoint),
@@ -80,16 +75,15 @@ df_aov <- data %>%
   dplyr::select(-.group)
 
 # Plot LysoTracker staining in iron manipulation experiments
-lysotrackerplot <- ggplot(df_aov, aes(x= factor(treatment, levels=order), y = emmean, fill = factor(treatment, levels=order)))+
+lysotrackerplot <- ggplot(df_aov, aes(x= timepoint, y = emmean, fill=treatment))+
   geom_bar(position = 'dodge', stat = 'identity') +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), position = position_dodge(.9), width = 0.2) + 
-  geom_text(aes(label = cld, y = upper.CL), vjust = -0.5, position = position_dodge(0.9),size = 3)+
-  labs(x="", y="Percent of Potentially Mixotrophic \nPhototrophs (LysoTracker)", fill="Treatment")+
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), position = position_dodge(.9), width = 0.2, color="black") + 
+  geom_text(aes(label = cld, y = upper.CL), vjust = -0.5, position = position_dodge(0.9),size = 3, color="black")+
+  labs(x="", y="Percent of Grazing\nPhototrophs (LysoTracker)", fill="Taxonomic Group")+
   theme_classic(base_size = 14)+
-  scale_fill_manual(values = custom_colors) +
-  facet_grid(~timepoint) +
+  scale_fill_manual(values = "gray80") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  ggtitle("a)")
+  ylim(0,100) +  ggtitle("a)")
 lysotrackerplot
 
 
@@ -98,20 +92,22 @@ lysotrackerplot
 # --------------------------------------------------------
 
 # Read in data
-taxa <- read_excel("Data/CubiTaxa.xlsx")
+taxa <- read_excel("Data/CubiTaxa.xlsx") %>%
+  filter(Treatment== "Control")
 
 # Define color pallette
 browngreenblue <- c("#8B5E3C", "#D2B48C", "#B77952", "#4682B4", "#87CEEB", "#003366", 
                     "#556B2F", "#3CB371", "#A9BA9D")
 
 # Bar plot of normalized reads by taxonomic group and treatment/timepoint
-alltaxa <- ggplot(taxa, aes(x=factor(Treatment, levels=order), Treatment, y=PercentReads, fill=Taxa))+
+alltaxa <- ggplot(taxa, aes(x=Timepoint, Treatment, y=PercentReads, fill=Taxa))+
   geom_bar(stat="identity") +
-  facet_grid(~Timepoint) +
   scale_fill_manual(values = browngreenblue) +
   theme_classic(base_size = 14)+
   ggtitle("b)")+
-  labs(x="", y='% Protist Normalized Reads', fill='Taxonomic Group')+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  labs(x="", y='% Protist Normalized Reads', fill='Taxonomic Group')+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+  scale_x_continuous(breaks = c(7, 11)) 
+
 
 alltaxa
 
@@ -119,7 +115,7 @@ alltaxa
 final_plot <- plot_grid(lysotrackerplot, alltaxa, ncol = 1, rel_heights = c(1, 1))
 final_plot
 # Save figure
-ggsave("Figures/Figure6.tiff", plot = final_plot, width = 12, height = 12, units = "in", dpi = 300)
+ggsave("Figures/Figure6.tiff", plot = final_plot, width = 8, height = 8, units = "in", dpi = 300)
 
 # --------------------------------------------------------
 # Supplemental Figure 12: Nanoeukaryotes and NO3 over time
@@ -134,7 +130,6 @@ supp12 <- ggplot()+
   geom_smooth(data=feincubations, aes(x=Timepoint, y=nanoeukaryotes), se=FALSE, colour="black")+
   geom_point(data=feincubations, aes(x=Timepoint, y=NO3*coeff), color="gray80")+
   geom_smooth(data=feincubations, aes(x=Timepoint, y=NO3*coeff), color="gray80", se=FALSE, linetype="dashed" )+
-  facet_grid(~factor(Treatment, levels=c("Control", "Iron Addition", "DFB (iron chelator)")), scales="free") +
   scale_y_continuous(name="Phototrophic Nanoeuks (cells/mL)", 
                      labels = scales::label_scientific(style = "plain"),
                      sec.axis=sec_axis(trans=~./coeff, name="Nitrate Concentration (µM)")) +
