@@ -98,4 +98,15 @@ fig4 <- grid.arrange(synechococcus, bacteria, heterotrophs, nanoeukaryotes)
 ggsave("Figures/Figure4.tiff", plot = fig4, width = 15, height = 7, units = "in", dpi = 300)
 
 # ---- Save Merged Dataset for Reuse ----
-write.csv(alllysotracker, "Data/AllCruiseLysoTracker.csv")
+savedlysotracker <- alllysotracker %>%
+  group_by(Cruise, Station) %>%
+  dplyr::arrange(Depth, .by_group = TRUE) %>%
+  mutate(
+    DepthRank = row_number(),
+    DepthCode = case_when(
+      DepthRank == 1 ~ "Surface",
+      DepthRank == 2 ~ "DCM",
+      TRUE ~ "Deep")) %>%
+  ungroup() %>%
+  select(!DepthRank)
+write.csv(savedlysotracker, "Data/AllCruiseLysoTracker.csv")
