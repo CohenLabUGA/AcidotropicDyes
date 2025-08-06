@@ -105,7 +105,7 @@ alltaxa <- ggplot(taxa, aes(x=Timepoint, Treatment, y=PercentReads, fill=Taxa))+
   scale_fill_manual(values = browngreenblue) +
   theme_classic(base_size = 14)+
   ggtitle("b)")+
-  labs(x="", y='% Protist Normalized Reads', fill='Taxonomic Group')+ 
+  labs(x="Day of Incubation", y='% Protist Normalized Reads', fill='Taxonomic Group')+ 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+  scale_x_continuous(breaks = c(7, 11)) 
 
 
