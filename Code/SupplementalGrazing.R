@@ -59,7 +59,7 @@ final_figure <- plot_grid(
 print(final_figure)
 
 # Save full supplemental figure
-ggsave("Figures/Supp3.png", final_figure, width = 10, height = 6, dpi = 300)
+ggsave("Figures/Supp4.png", final_figure, width = 10, height = 6, dpi = 300)
 
 
 # ----------------------------------------------------------
@@ -83,5 +83,5 @@ somixos <- ggplot(suppfiguredf, aes(x=Culture, y=AvIR)) +
   labs(y=expression(paste("Ingestion Rate (Bacteria ", cell^{'-1'},hour^{-1}, ")"))) 
 
 # Save figure
-ggsave("Figures/Supp2.png", somixos, width = 6, height = 6, dpi = 300)
+ggsave("Figures/Supp3.png", somixos, width = 6, height = 6, dpi = 300)
 
