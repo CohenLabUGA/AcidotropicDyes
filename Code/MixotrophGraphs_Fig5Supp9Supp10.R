@@ -147,7 +147,7 @@ mixoplot <- grid.arrange(
 ggsave("Figures/Figure5.tiff", plot = mixoplot, width = 14, height = 11, units = "in", dpi = 300)
 
 # ========================================
-# Supplemental Figure 9: NES Only
+# Supplemental Figure 10: NES Only
 # ========================================
 nesgrazing <- flpdf %>%
   filter(Cruise=="North East Shelf") %>%
@@ -188,10 +188,10 @@ percentmixos
 
 # ---- Combine and save Supplemental Fig 9 ----
 proportioncsgr <- grid.arrange(percentmixos, csgr)
-ggsave("Figures/SuppFig9.tiff", plot = proportioncsgr, width = 9, height = 10, units = "in", dpi = 300)
+ggsave("Figures/SuppFig10.tiff", plot = proportioncsgr, width = 9, height = 10, units = "in", dpi = 300)
 
 # ========================================
-# Supplemental Figure 10: FLP Grazing by Cruise
+# Supplemental Figure 11: FLP Grazing by Cruise
 # ========================================
 
 # ---- Plot grazing rate by cruise ----
@@ -225,5 +225,5 @@ br <- ggplot(flpdf, aes(x = Station, color = Depth, shape=Method)) +
 br
 
 # ---- Combine and save Supplemental Fig 10 ----
-supp10 <- grid.arrange(br, csgr, nrow=1)
-ggsave("Figures/SuppFig10.tiff", plot = supp10, width = 16, height = 8, units = "in", dpi = 300)
+supp11 <- grid.arrange(br, csgr, nrow=1)
+ggsave("Figures/SuppFig11.tiff", plot = supp11, width = 16, height = 8, units = "in", dpi = 300)
