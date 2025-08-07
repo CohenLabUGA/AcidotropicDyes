@@ -140,5 +140,5 @@ supp13 <- ggplot()+
 supp13
 
 # Save the figure
-ggsave("Figures/SuppFig13.tiff", plot = supp12, width = 12, height = 6, units = "in", dpi = 300)
+ggsave("Figures/SuppFig13.tiff", plot = supp13, width = 12, height = 6, units = "in", dpi = 300)
 
