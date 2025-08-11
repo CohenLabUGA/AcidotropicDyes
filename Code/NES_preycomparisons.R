@@ -116,7 +116,7 @@ daynightsub <- daynightsub %>%
 # ----------------------------------------------
 coeff <- 40 # scaling factor for secondary axis
 
-suppfig5 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) + 
+suppfig6 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) + 
   geom_bar(stat = 'identity', position = 'dodge', color = 'black') +
   facet_grid(Type ~ Station, scales = "free") +
   geom_errorbar(
@@ -140,4 +140,4 @@ suppfig5 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
 # ----------------------------------------------
 # Step 9: Save the plot
 # ----------------------------------------------
-ggsave("Figures/Supp5.tiff", suppfig5, width = 10, height = 6, dpi = 300)
+ggsave("Figures/Supp6.tiff", suppfig6, width = 10, height = 6, dpi = 300)

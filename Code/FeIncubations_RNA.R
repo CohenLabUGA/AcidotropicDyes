@@ -14,7 +14,7 @@ library(cowplot)
 
 
 # --------------------------------------------------------
-# Supplemental Figure 11: Taxonomic composition by station
+# Supplemental Figure 12: Taxonomic composition by station
 # --------------------------------------------------------
 
 # Read in dataframe
@@ -32,7 +32,7 @@ stationtaxa <- ggplot(df, aes(x=Station, y=Avg_Percentage, fill=lineage))+
   labs(x="Station", y='% Protist Normalized Reads', fill='Taxonomic Group')
 
 # Save figure
-ggsave("Figures/SuppFig11.tiff", plot = stationtaxa, width = 6, height = 6, units = "in", dpi = 300)
+ggsave("Figures/SuppFig12.tiff", plot = stationtaxa, width = 6, height = 6, units = "in", dpi = 300)
 
 # --------------------------------------------------------
 # Figure 6a: Effect of Fe treatments on mixotrophy (LysoTracker)
@@ -118,14 +118,14 @@ final_plot
 ggsave("Figures/Figure6.tiff", plot = final_plot, width = 8, height = 8, units = "in", dpi = 300)
 
 # --------------------------------------------------------
-# Supplemental Figure 12: Nanoeukaryotes and NO3 over time
+# Supplemental Figure 13: Nanoeukaryotes and NO3 over time
 # --------------------------------------------------------
 
 # Coefficient to scale nitrate for plotting on secondary axis
 coeff <- 700
 
 # Plot: nanoeukaryote abundance + NO3 over time by treatment
-supp12 <- ggplot()+
+supp13 <- ggplot()+
   geom_point(data=feincubations, aes(x=Timepoint, y=nanoeukaryotes), color="black") + 
   geom_smooth(data=feincubations, aes(x=Timepoint, y=nanoeukaryotes), se=FALSE, colour="black")+
   geom_point(data=feincubations, aes(x=Timepoint, y=NO3*coeff), color="gray80")+
@@ -137,8 +137,8 @@ supp12 <- ggplot()+
                    text=element_text(size=17))+
   scale_x_continuous(breaks=c(0,2,7,11)) +
   labs(x="Time (days)")
-supp12
+supp13
 
 # Save the figure
-ggsave("Figures/SuppFig12.tiff", plot = supp12, width = 12, height = 6, units = "in", dpi = 300)
+ggsave("Figures/SuppFig13.tiff", plot = supp13, width = 12, height = 6, units = "in", dpi = 300)
 
