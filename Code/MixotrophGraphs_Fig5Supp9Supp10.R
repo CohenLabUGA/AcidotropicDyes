@@ -50,7 +50,16 @@ flpdf$jittered_x  <- jitter(as.numeric(flpdf$Station),  amount = 0.25)
 # ========================================
 # Create Figure 5: FLP and LysoTracker Concentration + Percent
 # ========================================
+## Calculate intercruise means of concentration and percent
+flp_means <- flpdf %>%
+  group_by(Cruise) %>%
+  summarise(mean_conc = mean(avconc, na.rm = TRUE), 
+            mean_percent=mean(avpercent, na.rm=TRUE))
 
+lyso_means <- lysodf %>%
+  group_by(Cruise) %>%
+  summarise(mean_conc = mean(avmixo, na.rm = TRUE), 
+            mean_percent=mean(avpercent, na.rm=TRUE))
 # ---- a) FLP mixotroph concentration ----
 FLPmixoconc <- ggplot(flpdf, aes(x=jittered_x, y=avconc, color=Depth, shape=Cruise)) + 
   geom_point(size=3) +
@@ -66,7 +75,9 @@ FLPmixoconc <- ggplot(flpdf, aes(x=jittered_x, y=avconc, color=Depth, shape=Crui
   scale_x_continuous(
     breaks = unique(as.numeric(as.factor(flpdf$Station))),
     labels = levels(as.factor(flpdf$Station))) +
-  theme(text = element_text(size=18) )
+  theme(text = element_text(size=18) ) +
+  geom_hline(data = flp_means, aes(yintercept = mean_conc), 
+             color = "red", linetype = "dashed")
 FLPmixoconc
 
 # ---- c) FLP mixotroph percent of nanoeukaryotes ----
@@ -87,7 +98,9 @@ FLPpercent <- ggplot(flpdf, aes(x = jittered_x, y = avpercent, color = Depth, sh
   labs(y = expression(paste("Proportion of Mixotrophic Phototrophs FLP")), x="Station") + 
   theme_bw() +
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
-  theme(legend.position = 'none')+  theme(text = element_text(size=18) )
+  theme(legend.position = 'none')+  theme(text = element_text(size=18) ) +
+  geom_hline(data = flp_means, aes(yintercept = mean_percent), 
+             color = "red", linetype = "dashed")
 FLPpercent
 
 # ---- d) LysoTracker mixotroph proportion of nanoeukaryotes ----
@@ -102,7 +115,9 @@ lysopercent <- ggplot(lysodf, aes(x = jittered_x, y = avpercent, color = DepthCo
   ggtitle("d)")+
   scale_x_continuous(
     breaks = 1:11, 
-    labels = levels(lysodf$Station))
+    labels = levels(lysodf$Station)) +
+  geom_hline(data = lyso_means, aes(yintercept = mean_percent), 
+             color = "red", linetype = "dashed")
 lysopercent
 
 # ---- b) LysoTracker mixotroph concentration ----
@@ -119,17 +134,19 @@ lysoconcentration <- ggplot(lysodf, aes(x = jittered_x, y = avmixo, color = Dept
   ggtitle("b)")+
   scale_x_continuous(
     breaks = 1:11, 
-    labels = levels(lysodf$Station))
+    labels = levels(lysodf$Station)) +
+  geom_hline(data = lyso_means, aes(yintercept = mean_conc), 
+             color = "red", linetype = "dashed")
 lysoconcentration
 
 # ---- Extract legend from one plot ----
 legend <- ggplot(flpdf, aes(x = Station, y = avpercent, color = Depth, shape=Method)) +
-  geom_point(size=4) +
+  geom_point(size=3) +
   theme_bw()+
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
   scale_shape_manual(values = c("Microscopy" = 15,
                                 "FlowCytometry" = 16))+
-  theme(text = element_text(size=18))
+  theme(text = element_text(size=18) )
 
 legend <- get_legend(legend)
 
@@ -145,50 +162,6 @@ mixoplot <- grid.arrange(
   widths = c(4, 1))
 # ---- Save final Figure 5 ----
 ggsave("Figures/Figure5.tiff", plot = mixoplot, width = 14, height = 11, units = "in", dpi = 300)
-
-# ========================================
-# Supplemental Figure 10: NES Only
-# ========================================
-nesgrazing <- flpdf %>%
-  filter(Cruise=="North East Shelf") %>%
-  mutate(Depth = ifelse(Depth == "DCM", "SCM", Depth))
-
-# ---- Plot grazing rate ----
-csgr <- ggplot(nesgrazing, aes(x = jittered_x, color = Method, shape=Method)) + 
-  geom_point(aes(y=avgrazing), size=3) +
-  scale_shape_manual(values = c("Microscopy" = 15,
-                                "FlowCytometry" = 16))+
-  geom_errorbar(aes(ymin = avgrazing - sdgrazing, 
-                    ymax = avgrazing + sdgrazing), width=0.8) +
-  labs(y = expression(paste("Cell specific grazing rate (Bacteria ", cell^{'-1'},hour^{-1}, ")")), x="Station") + 
-  theme_bw() +
-  scale_color_manual(values = c("Microscopy" = "gray", "FlowCytometry" = "black")) +
-  theme(text = element_text(size=16) )+ scale_x_continuous(
-    breaks = unique(as.numeric(as.factor(flpdf$Station))),
-    labels = levels(as.factor(flpdf$Station)))+
-  facet_wrap(~Depth)
-
-csgr
-
-# ---- Plot percent mixotrophs ----
-percentmixos <- ggplot(nesgrazing, aes(x = jittered_x, color = Method, shape=Method)) + 
-  geom_point(aes(y=avpercent), size=3) + 
-  scale_shape_manual(values = c("Microscopy" = 15,
-                              "FlowCytometry" = 16))+
-  geom_errorbar(aes(ymin = avpercent - sdpercent, 
-                    ymax = avpercent + sdpercent), width=0.8) +
-  labs(y = "Percent of Mixotrophic Phototrophs", x="Station") + 
-  theme_bw() +
-  scale_color_manual(values = c("Microscopy" = "gray", "FlowCytometry" = "black")) +
-  theme(text = element_text(size=16) )+ scale_x_continuous(
-    breaks = unique(as.numeric(as.factor(flpdf$Station))),
-    labels = levels(as.factor(flpdf$Station))) +
-  facet_wrap(~Depth)
-percentmixos
-
-# ---- Combine and save Supplemental Fig 9 ----
-proportioncsgr <- grid.arrange(percentmixos, csgr)
-ggsave("Figures/SuppFig10.tiff", plot = proportioncsgr, width = 9, height = 10, units = "in", dpi = 300)
 
 # ========================================
 # Supplemental Figure 11: FLP Grazing by Cruise
