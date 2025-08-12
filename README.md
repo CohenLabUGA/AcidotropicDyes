@@ -35,7 +35,7 @@ Community composition on each cruise, seen in Figure 4 was plotted using [Commun
 
 Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5 and supplemental figures 9, 10, and 11 were plotted using [MixotrophGraphs.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs.R). Significant differences were calculated in the file [FLPStatistics.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPStatistics.R). 
 
-CCS incubation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 12, and Supplemental Figure 13, were plotted using [FeIncubations_RNA.R][(https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCSIncubations_RNA.R)](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCSIncubations_RNA.R). 
+CCS incubation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 12, and Supplemental Figure 13, were plotted using [CCSIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCSIncubations_RNA.R). 
 
 
 Finally, supplemental grazing data for the mixotrophs (Supplemental Figures 3 and 4) was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise (Supplemental Figure 6) were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
