@@ -334,3 +334,18 @@ compplot <- grid.arrange(
 
 ggsave("Figures/SuppFig11.tiff", plot = compplot, width = 10, height = 8, units = "in", dpi = 300)
 
+# ---- Calculat bland-altman stats ----
+bland_altman_stats <- mergedflplyso %>%
+  group_by(Cruise) %>%
+  na.omit() %>%
+  dplyr::summarise(
+    mean_diff_conc = mean(avconc_flp - avconc_lyso),
+    sd_diff_conc = sd(avconc_flp - avconc_lyso),
+    loa_lower_conc = mean_diff_conc - 1.96 * sd_diff_conc,
+    loa_upper_conc = mean_diff_conc + 1.96 * sd_diff_conc,
+    mean_measurement_conc = mean((avconc_flp + avconc_lyso) / 2), 
+    mean_diff_percent = mean(avpercent_flp - avpercent_lyso),
+    sd_diff_percent = sd(avpercent_flp - avpercent_lyso),
+    loa_lower_percent = mean_diff_percent - 1.96 * sd_diff_percent,
+    loa_upper_percent = mean_diff_percent + 1.96 * sd_diff_percent,
+    mean_measurement_percent = mean((avpercent_flp + avpercent_lyso) / 2))
