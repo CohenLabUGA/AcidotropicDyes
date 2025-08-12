@@ -39,23 +39,21 @@ ggsave("Figures/SuppFig12.tiff", plot = stationtaxa, width = 6, height = 6, unit
 # --------------------------------------------------------
 
 # Read and format iron incubation data
-feincubations <- read_excel("Data/FeIncubations.xlsx") %>%
+incubations <- read_excel("Data/CCSIncubations.xlsx") %>%
   mutate(Timepoint = case_when(
     Timepoint =="T0" ~0,
     Timepoint =="T1" ~2,
     Timepoint == "T2" ~ 7,
     Timepoint == "T3" ~ 11)) %>%
   mutate(Treatment = case_when(
-    Treatment=="control" ~ "Control", 
-    Treatment =="dfb" ~"DFB (iron chelator)", 
-    Treatment =="iron"~"Iron Addition")) %>%
+    Treatment=="control" ~ "Control"))%>%
   mutate(proportionmixos = proportionmixos *100) %>%
   filter(Treatment=="Control")
 
 # Prepare data for ANOVA 
-data <- data.frame(timepoint = as.factor(feincubations$Timepoint),
-                   treatment = as.factor(feincubations$Treatment),
-                   result = feincubations$proportionmixos)
+data <- data.frame(timepoint = as.factor(incubations$Timepoint),
+                   treatment = as.factor(incubations$Treatment),
+                   result = incubations$proportionmixos)
 
 # Perform one-way ANOVA per treatment, calculate posthoc pairwise comparisons
 df_aov <- data %>%
