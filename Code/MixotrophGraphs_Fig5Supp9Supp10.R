@@ -10,6 +10,10 @@ library(caret)
 library(tidyr)
 library(stringr)
 library(dplyr)
+library(grid)
+library(tiff)
+library(cowplot)
+set.seed(123)
 
 # ========================================
 # Load and Prepare Data
@@ -162,6 +166,40 @@ mixoplot <- grid.arrange(
   widths = c(4, 1))
 # ---- Save final Figure 5 ----
 ggsave("Figures/Figure5.tiff", plot = mixoplot, width = 14, height = 11, units = "in", dpi = 300)
+
+# ---- Save photos to be stitched to Figure 5 in illustrator ---
+# Step 1: Download photos from Zenodo into the Data folder https://zenodo.org/records/16813439 and rename folder to "Photos"
+
+# Step 2: Load in all CCS photos and turn into grobs with a random subset of 49 photos
+ccstiffs <- list.files("Data/Photos/CCS", pattern="\\.tif$", full.names = TRUE)
+# Read tiff's and turn into grobs
+ccs_grobs <- lapply(ccstiffs, function(f) {
+  img <- readTIFF(f, native = TRUE)
+  rasterGrob(img, interpolate = TRUE)
+})
+# Take a random subset of 49
+ccs_grobs <- sample(ccs_grobs, 49)
+
+# Repeat for NES photos
+nestiffs <- list.files("Data/Photos/NES", pattern="\\.tif$", full.names = TRUE)
+nes_grobs <- lapply(nestiffs, function(f) {
+  img <- readTIFF(f, native = TRUE)
+  rasterGrob(img, interpolate = TRUE)
+})
+nes_grobs <- sample(nes_grobs, 49)
+
+# Step 3: Arrange the grobs into columns of 7 each (7x7 square)
+ccs_block <- arrangeGrob(grobs = ccs_grobs, ncol = 7)
+nes_block <- arrangeGrob(grobs = nes_grobs, ncol = 7)
+
+# Step 4: Label and save each image
+ccs_labeled <- plot_grid(ggdraw() + draw_label("California Current System", fontface = "bold", size = 18),
+                         ccs_block, ncol = 1, rel_heights = c(0.1, 1))
+ggsave("Figures/CCSphotos.tiff", plot = ccs_labeled, width = 8, height = 8, units = "in", dpi = 300)
+
+nes_labeled <- plot_grid(ggdraw() + draw_label("North East Shelf", fontface = "bold", size = 18),
+                         nes_block, ncol = 1, rel_heights = c(0.1, 1))
+ggsave("Figures/NESphotos.tiff", plot = nes_labeled, width = 8, height = 8, units = "in", dpi = 300)
 
 # ========================================
 # Supplemental Figure 11: FLP Grazing by Cruise
