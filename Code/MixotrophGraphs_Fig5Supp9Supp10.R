@@ -238,3 +238,99 @@ br
 # ---- Combine and save Supplemental Fig 10 ----
 supp11 <- grid.arrange(br, csgr, nrow=1)
 ggsave("Figures/SuppFig11.tiff", plot = supp11, width = 16, height = 8, units = "in", dpi = 300)
+
+
+# ---- Create supplemental figure comparison ----
+lysodf_tomerge <- lysodf %>%
+  select(Station, avpercent,sdpercent,avmixo,sdmixo,Cruise,DepthCode) %>%
+  dplyr::rename(Depth = DepthCode, 
+                avconc = avmixo, 
+                sdconc =sdmixo) 
+flpdf_tomerge <- flpdf %>%
+  select(Station, avpercent,sdpercent,avconc,sdconc,Cruise,Depth, Method)
+
+mergedflplyso <- full_join(
+  lysodf_tomerge,
+  flpdf_tomerge,
+  by = c("Station", "Cruise", "Depth"),
+  suffix = c("_lyso", "_flp")) %>%
+  mutate(Method = replace_na(Method, "FlowCytometry"))
+
+r2_conc <- mergedflplyso %>%
+  group_by(Cruise) %>%
+  do({
+    fit <- lm(avconc_flp ~ avconc_lyso, data = .)
+    tidy_fit <- glance(fit)
+    data.frame(Cruise = unique(.$Cruise), r2 = tidy_fit$r.squared)
+  })
+
+r2_percent <- mergedflplyso %>%
+  group_by(Cruise) %>%
+  do({
+    fit <- lm(avpercent_flp ~ avpercent_lyso, data = .)
+    tidy_fit <- glance(fit)
+    data.frame(Cruise = unique(.$Cruise), r2 = tidy_fit$r.squared)
+  })
+
+label_pos_conc <- r2_conc %>%
+  mutate(x = Inf, y = -Inf, label = paste0("R² = ", round(r2, 2)))
+
+label_pos_percent <- r2_percent %>%
+  mutate(x = Inf, y = -Inf, label = paste0("R² = ", round(r2, 2)))
+
+conc <- ggplot(mergedflplyso, aes(x=avconc_lyso, y=avconc_flp, color=Depth, shape=Method)) + 
+  geom_point(size=3, alpha=0.8) +
+  facet_wrap(~Cruise, scales="free") +
+  geom_errorbar(aes(ymin=avconc_flp - sdconc_flp, ymax=avconc_flp + sdconc_flp), alpha=0.4) +
+  geom_errorbarh(aes(xmin=avconc_lyso - sdconc_lyso, xmax=avconc_lyso + sdconc_lyso), alpha=0.4) +
+  geom_abline(intercept = 0, slope = 1, linetype="dashed", color="red") +  # 1:1 line
+  geom_text(data = label_pos_conc, aes(x = x, y = y, label = label),
+            inherit.aes = FALSE,
+            hjust = 1.1, vjust = -0.5, size = 5, color = "red") +
+  theme_bw() +  
+  scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
+  labs(y="Mixotroph Concentration FLP", x="Mixotroph Concentration LysoTracker") +
+  ggtitle("b)") +  scale_shape_manual(values = c("Microscopy" = 15,
+                                                 "FlowCytometry" = 16))+
+  theme(text = element_text(size=18), legend.position="none")
+
+percent <- ggplot(mergedflplyso, aes(x=avpercent_lyso, y=avpercent_flp, color=Depth, shape=Method)) + 
+  geom_point(size=3, alpha=0.8) +
+  facet_wrap(~Cruise, scales="free") +
+  geom_errorbar(aes(ymin=avpercent_flp - sdpercent_flp, ymax=avpercent_flp + sdpercent_flp), alpha=0.4) +
+  geom_errorbarh(aes(xmin=avpercent_lyso - sdpercent_lyso , xmax=avpercent_lyso + sdpercent_lyso), alpha=0.4) +
+  geom_abline(intercept = 0, slope = 1, linetype="dashed", color="red") +  # 1:1 line
+  geom_text(data = label_pos_percent, aes(x = x, y = y, label = label),
+            inherit.aes = FALSE,
+            hjust = 1.1, vjust = -0.5, size = 5, color = "red") +
+  theme_bw() +  
+  scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
+  labs(y="Mixotroph Percent FLP", x="Mixotroph Percent LysoTracker") +
+  ggtitle("a)") +
+  scale_shape_manual(values = c("Microscopy" = 15,
+                                "FlowCytometry" = 16))+
+  theme(text = element_text(size=18), legend.position="none")
+grid.arrange(percent, conc)
+
+legend <- ggplot(flpdf, aes(x = Station, y = avpercent, color = Depth, shape=Method)) +
+  geom_point(size=3) +
+  theme_bw()+
+  scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
+  scale_shape_manual(values = c("Microscopy" = 15,
+                                "FlowCytometry" = 16))+
+  theme(text = element_text(size=18) )
+
+legend <- get_legend(legend)
+
+# ---- Combine all into one figure ----
+compplot <- grid.arrange(
+  arrangeGrob(
+    percent, conc,
+    ncol = 1,
+    top = ""),
+  legend,
+  ncol = 2,
+  widths = c(4, 1))
+
+ggsave("Figures/CompPlot.tiff", plot = compplot, width = 10, height = 8, units = "in", dpi = 300)
+
