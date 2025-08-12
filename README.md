@@ -31,7 +31,7 @@ FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA
 
 Community composition on each cruise seen in Figure 4 was plotted using [CommunityDepth.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CommunityDepth.R) with statistics run in [CruiseCommunityStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CruiseCommunityStats.R). 
 
-Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5, Supplemental figure 9, and Supplemental figure 10 were plotted using [MixotrophGraphs.R]((https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs.R)). Significant differences were calculated in the file [FLPStatistics.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPStatistics.R). 
+Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5, Supplemental figure 9, and Supplemental figure 10 were plotted using [MixotrophGraphs.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs.R). Significant differences were calculated in the file [FLPStatistics.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPStatistics.R). 
 
 Fe manipulation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 11, and Supplemental Figure 12, were plotted using [FeIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FeIncubations_RNA.R). 
 
