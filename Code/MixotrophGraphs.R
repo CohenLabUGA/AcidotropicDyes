@@ -332,5 +332,5 @@ compplot <- grid.arrange(
   ncol = 2,
   widths = c(4, 1))
 
-ggsave("Figures/CompPlot.tiff", plot = compplot, width = 10, height = 8, units = "in", dpi = 300)
+ggsave("Figures/SuppFig11.tiff", plot = compplot, width = 10, height = 8, units = "in", dpi = 300)
 
