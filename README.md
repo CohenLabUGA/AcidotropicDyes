@@ -15,7 +15,7 @@ Similarly, FLP incubations had both raw and processed data. The NES had both mic
 
 Flow cytometer settings as reported in supplemental table 1 can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/FlowCytometerInfo.xlsx). 
 
-For the CCS transect, RNA data and incubation experiments were also conducted. The RNA taxonomy information can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CubiTaxa.xlsx) for the incubation experiment and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/station_protist_taxonomy.csv) for the stations. These data were used to make Figure 6 and supplemental figures 12 and 13.
+For the CCS transect, RNA data and incubation experiments were also conducted. The RNA taxonomy information can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CubiTaxa.xlsx) for the incubation experiment and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/station_protist_taxonomy.csv) for the stations. Incubation experiment nutrient and community data can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CCSIncubations.xlsx). These data were used to make Figure 6 and supplemental figures 12 and 13.
 
 Finally, the data necessary for supplemental figures 3 and 4 relating to grazing on the two cruises can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx) with tabs for both Tetraselmis spp. and the Southern Ocean mixotrophs, with the z-stack image in supplemental figure 3 [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/TetraZStack-1.png)
 ## R Scripts
