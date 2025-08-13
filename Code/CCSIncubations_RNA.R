@@ -56,32 +56,33 @@ data <- data.frame(timepoint = as.factor(incubations$Timepoint),
                    result = incubations$proportionmixos)
 
 # Perform one-way ANOVA per treatment, calculate posthoc pairwise comparisons
-df_aov <- data %>%
-  dplyr::group_by(treatment) %>%
-  tidyr::nest() %>%
-  rowwise() %>% 
-  dplyr::mutate(
-    aov_results = list(aov(result ~ timepoint, data = data)),
-    aov_summary = list(summary(aov_results)),
-    p_value = aov_summary[[1]][["Pr(>F)"]][1],  # Extract p-value from summary
-    emm = list(emmeans::emmeans(aov_results, "timepoint", type = "response")),
+df_letters <- data %>%
+  group_by(treatment) %>%
+  nest() %>%
+  rowwise() %>%
+  mutate(
+    fit = list(lm(result ~ timepoint, data = data)),
+    emm = list(emmeans::emmeans(fit, "timepoint", type = "response")),
     cld = list(multcomp::cld(emm, Letters = LETTERS, reverse = TRUE))
-  ) %>% 
-  dplyr::select(-data, -aov_results, -aov_summary, -emm) %>%
-  tidyr::unnest(cols = c(cld)) %>%
-  dplyr::mutate(cld = trimws(.group)) %>%
-  dplyr::select(-.group)
+  ) %>%
+  select(-data, -fit, -emm) %>%
+  unnest(cld) %>%
+  mutate(cld = trimws(.group)) %>%
+  select(-.group)
 
 # Plot LysoTracker staining in iron manipulation experiments
-lysotrackerplot <- ggplot(df_aov, aes(x= timepoint, y = emmean, fill=treatment))+
+lysotrackerplot <- ggplot(df_letters, aes(x = timepoint, y = emmean, fill = treatment)) +
   geom_bar(position = 'dodge', stat = 'identity') +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), position = position_dodge(.9), width = 0.2, color="black") + 
-  geom_text(aes(label = cld, y = upper.CL), vjust = -0.5, position = position_dodge(0.9),size = 3, color="black")+
-  labs(x="", y="Percent of Grazing\nPhototrophs (LysoTracker)", fill="Taxonomic Group")+
-  theme_classic(base_size = 14)+
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
+                position = position_dodge(.9), width = 0.2, color = "black") +
+  geom_text(aes(label = cld, y = upper.CL),
+            vjust = -0.5, position = position_dodge(0.9),
+            size = 3, color = "black") +
+  labs(x = "", y = "Percent of Grazing\nPhototrophs (LysoTracker)",fill = "Taxonomic Group") +
+  theme_classic(base_size = 14) +
   scale_fill_manual(values = "gray80") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  ylim(0,100) +  ggtitle("a)")
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylim(0, 100) +
+  ggtitle("a)")
 lysotrackerplot
 
 
