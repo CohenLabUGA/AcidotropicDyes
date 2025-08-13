@@ -100,7 +100,7 @@ meanchange <- ggplot(merged_data, aes(x = factor(Culture, levels = resultsorder)
   geom_point(size = 4) +
   geom_errorbar(aes(ymin = Mean_Change_Avg - Mean_Change_SD, ymax=Mean_Change_Avg + Mean_Change_SD), width=0.7)+
   labs(title = "Mean Fluorescence Intensity Change",
-       y = "Change in Mean Green Fluoresence (Stained-Control)\nlog scale",
+       y = "Change in Mean Green Fluoresence\n(log scale)",
        x = "Culture",
        color = "Percent Stained\nLysoTracker") +
   theme_minimal() +
