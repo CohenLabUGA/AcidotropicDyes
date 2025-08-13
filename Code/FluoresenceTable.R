@@ -93,12 +93,14 @@ gtsave(table, filename = "Figures/Table2.png")
 # PART 4: Generate Fluorescence Change Plot
 # =========================================
 # ---- Scatter plot of mean fluorescence change vs percent stained ----
-meanchange <- ggplot(merged_data, aes(x = Culture, y = Mean_Change_Avg, color=percent)) +
+resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
+
+meanchange <- ggplot(merged_data, aes(x = factor(Culture, levels = resultsorder), y = Mean_Change_Avg, color=percent)) +
   scale_color_gradientn(colors = c("black", "purple", "yellow3"))+
   geom_point(size = 4) +
   geom_errorbar(aes(ymin = Mean_Change_Avg - Mean_Change_SD, ymax=Mean_Change_Avg + Mean_Change_SD), width=0.7)+
   labs(title = "Mean Fluorescence Intensity Change",
-       y = "Log Fluoresence Change\n(Stained - Control)",
+       y = "Change in Mean Green Fluoresence (Stained-Control)\nlog scale",
        x = "Culture",
        color = "Percent Stained\nLysoTracker") +
   theme_minimal() +
@@ -111,7 +113,6 @@ meanchange
 type_bar <- merged_data %>%
   mutate(Culture = factor(Culture, levels = unique(merged_data$Culture)))
 
-resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
 
 color <- c("Diatom"= "#CAB2D6", 
            "Coccolithophore"="#33A02C",
@@ -133,5 +134,5 @@ combined_plot <- meanchange / type_plot+
 combined_plot
 
 # ---- Save Figure 3 ----
-ggsave("Figures/Figure3.tiff", plot = combined_plot, width = 12, height = 7, units = "in", dpi = 300)
+ggsave("Figures/Figure3.tiff", plot = combined_plot, width = 12, height = 9, units = "in", dpi = 300)
 
