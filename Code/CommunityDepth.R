@@ -48,7 +48,7 @@ alllysotracker$DepthBin <- factor(alllysotracker$DepthBin, levels = rev(levels(a
 nanoeukaryotes <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = avnano)) +
   geom_tile(color = "white") +
   facet_wrap(~Cruise, scales = "free_x") +
-  scale_fill_viridis_c(option = "plasma", na.value = "grey80") +
+  scale_fill_viridis_c(option = "plasma", na.value = "white") +
   labs(x = "Station", y = "Depth Bin (m)", fill = expression(paste("Phototrophs ",mL^{'-1'}))) +
   theme_classic() +
   theme(text = element_text(size=16) )+
@@ -57,7 +57,7 @@ nanoeukaryotes <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = a
 heterotrophs <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = avhetero)) +
   geom_tile(color = "white") +
   facet_wrap(~Cruise, scales = "free_x") +
-  scale_fill_viridis_c(option = "plasma", na.value = "grey80") +
+  scale_fill_viridis_c(option = "plasma", na.value = "white") +
   labs(x = "Station", y = "Depth Bin (m)", fill = expression(paste("Heterotrophs ",mL^{'-1'}))) +
   theme_classic() +
   theme(text = element_text(size=16) )+
@@ -66,7 +66,7 @@ heterotrophs <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = avh
 synechococcus <- ggplot(alllysotracker, aes(x = Station, y = DepthBin, fill = avsyn)) +
   geom_tile(color = "white") +
   facet_wrap(~Cruise, scales = "free_x") +
-  scale_fill_viridis_c(option = "plasma", na.value = "grey80") +
+  scale_fill_viridis_c(option = "plasma", na.value = "white") +
   labs(x = "Station", y = "Depth Bin (m)", fill = expression(paste("Synechococcus ",mL^{'-1'}))) +
   theme_classic() +
   theme(text = element_text(size=16) )+
@@ -85,7 +85,7 @@ bacdf$Station <- factor(bacdf$Station,
 bacteria <- ggplot(bacdf, aes(x = Station, y = DepthBin, fill = bacteria)) +
   geom_tile(color = "white") +
   facet_wrap(~Cruise, scales = "free_x") +
-  scale_fill_viridis_c(option = "plasma", na.value = "grey80") +
+  scale_fill_viridis_c(option = "plasma", na.value = "white") +
   labs(x = "Station", y = "Depth Bin (m)", fill = expression(paste("Bacteria ",mL^{'-1'}))) +
   theme_classic() +
   theme(text = element_text(size=16) )+
