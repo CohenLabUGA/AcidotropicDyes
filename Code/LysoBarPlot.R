@@ -79,7 +79,7 @@ sensor <- ggplot(sensordata, aes(x = factor(Name, levels = resultsorder), y = pe
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
   theme_classic() +
-  labs(x = "", y = "Proportion Stained LysoSensor", fill='Group') +
+  labs(x = "", y = "Proportion Stained LysoSensor", fill='Lineage') +
   ggtitle("b)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = margin(10, 10, 30, 10),
