@@ -154,6 +154,5 @@ table <- table_df %>%
 table
 
 # Save table
-gtsave(table, "Figures/Table2.png")
-gtsave(table, filename = "Figures/Table2.png", vwidth = 1500, vheight = 3200, zoom = 3)
+gtsave(table, filename = "Figures/SuppTable2.png", vwidth = 1500, vheight = 3200, zoom = 3)
 

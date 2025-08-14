@@ -125,10 +125,10 @@ coeff <- 700
 
 # Plot: nanoeukaryote abundance + NO3 over time by treatment
 supp13 <- ggplot()+
-  geom_point(data=feincubations, aes(x=Timepoint, y=nanoeukaryotes), color="black") + 
-  geom_smooth(data=feincubations, aes(x=Timepoint, y=nanoeukaryotes), se=FALSE, colour="black")+
-  geom_point(data=feincubations, aes(x=Timepoint, y=NO3*coeff), color="gray80")+
-  geom_smooth(data=feincubations, aes(x=Timepoint, y=NO3*coeff), color="gray80", se=FALSE, linetype="dashed" )+
+  geom_point(data=incubations, aes(x=Timepoint, y=nanoeukaryotes), color="black") + 
+  geom_smooth(data=incubations, aes(x=Timepoint, y=nanoeukaryotes), se=FALSE, colour="black")+
+  geom_point(data=incubations, aes(x=Timepoint, y=NO3*coeff), color="gray80")+
+  geom_smooth(data=incubations, aes(x=Timepoint, y=NO3*coeff), color="gray80", se=FALSE, linetype="dashed" )+
   scale_y_continuous(name="Phototrophic Nanoeuks (cells/mL)", 
                      labels = scales::label_scientific(style = "plain"),
                      sec.axis=sec_axis(trans=~./coeff, name="Nitrate Concentration (µM)")) +

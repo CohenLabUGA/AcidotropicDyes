@@ -29,7 +29,7 @@ df <- read_excel("Data/NES_FLP_FCM.xlsx") %>%
 summdata <- df %>%
   filter(Type %in% c("Ecoli", "Green")) %>%
   group_by(Place, Station, Time, Type, Timepoint) %>%
-  summarise(
+  dplyr::summarise(
     avpercent = mean(percentmixo),
     sdpercent = sd(percentmixo),
     .groups = "drop")
@@ -43,7 +43,7 @@ allcalc <- df %>%
   group_by(Station, Place, Time, Type, Rep) %>%
   filter(all(c(0, 1) %in% Timepoint)) %>%
   pivot_wider(names_from = Timepoint, values_from = percentmixo) %>%
-  summarise(
+  dplyr::summarise(
     avpercent = mean(`1` - `0`, na.rm = TRUE),
     sdpercent = sd(`1` - `0`, na.rm = TRUE),
     .groups = "drop")
@@ -54,7 +54,7 @@ allcalc <- df %>%
 daynight <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
   group_by(Station, Type, Place, Timepoint) %>%
-  summarise(
+  dplyr::summarise(
     avpercent = mean(percentmixo),
     sdpercent = sd(percentmixo),
     avmixo = mean(mixo),
@@ -68,7 +68,7 @@ daynight <- df %>%
 avnano <- df %>%
   filter(Timepoint != 2, Type %in% c("Ecoli", "Green")) %>%
   group_by(Station, Type, Place) %>%
-  summarise(
+  dplyr::summarise(
     avnano = mean(totalnano),
     sdnano = sd(totalnano),
     .groups = "drop")
@@ -80,7 +80,7 @@ avnano <- df %>%
 daynightsub <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
   group_by(Station, Type, Place, Timepoint) %>%
-  summarise(avmixo = mean(mixo), .groups = "drop") %>%
+  dplyr::summarise(avmixo = mean(mixo), .groups = "drop") %>%
   pivot_wider(names_from = Timepoint, values_from = avmixo) %>%
   mutate(diff = `1` - `0`) %>%
   left_join(avnano, by = c("Station", "Type", "Place")) %>%
@@ -140,4 +140,4 @@ suppfig6 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
 # ----------------------------------------------
 # Step 9: Save the plot
 # ----------------------------------------------
-ggsave("Figures/Supp6.tiff", suppfig6, width = 10, height = 6, dpi = 300)
+ggsave("Figures/SuppFig6.tiff", suppfig6, width = 10, height = 6, dpi = 300)

@@ -78,7 +78,7 @@ gt_rep_table <- supptable2 %>%
 gt_rep_table
 
 # Save table
-gtsave(gt_rep_table, filename = "Figures/SuppTable2.png")
+gtsave(gt_rep_table, filename = "Figures/SuppTable3.png")
 
 #### Making of Supplemental Table of Flow Cytometer Values ####
 data <- read_excel("Data/FlowCytometerInfo.xlsx") 
