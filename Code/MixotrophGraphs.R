@@ -12,7 +12,9 @@ library(stringr)
 library(dplyr)
 library(grid)
 library(tiff)
+library(ggforce)
 library(cowplot)
+library(broom)
 set.seed(123)
 
 # ========================================
@@ -273,20 +275,32 @@ r2_percent <- mergedflplyso %>%
   })
 
 label_pos_conc <- r2_conc %>%
-  mutate(x = Inf, y = -Inf, label = paste0("R² = ", round(r2, 2)))
+  mutate(x = -Inf, y = Inf, label = paste0("R² = ", round(r2, 2)))
 
 label_pos_percent <- r2_percent %>%
-  mutate(x = Inf, y = -Inf, label = paste0("R² = ", round(r2, 2)))
+  mutate(x = -Inf, y = Inf, label = paste0("R² = ", round(r2, 2)))
 
-conc <- ggplot(mergedflplyso, aes(x=avconc_lyso, y=avconc_flp, color=Depth, shape=Method)) + 
+limits_df <- mergedflplyso %>%
+  group_by(Cruise) %>%
+  dplyr::summarise( min_conc    = min(min(avconc_lyso, na.rm = TRUE), min(avconc_flp, na.rm = TRUE)),
+                    max_conc    = max(max(avconc_lyso, na.rm = TRUE), max(avconc_flp, na.rm = TRUE)),
+                    min_percent = min(min(avpercent_lyso, na.rm = TRUE), min(avpercent_flp, na.rm = TRUE)),
+                    max_percent = max(max(avpercent_lyso, na.rm = TRUE), max(avpercent_flp, na.rm = TRUE)))
+
+plot_data <- mergedflplyso %>%
+  left_join(limits_df, by = "Cruise")
+
+conc <- ggplot(plot_data, aes(x=avconc_lyso, y=avconc_flp, color=Depth, shape=Method)) + 
   geom_point(size=3, alpha=0.8) +
-  facet_wrap(~Cruise, scales="free") +
+  facet_wrap(~Cruise, scales = "free") +
+  geom_blank(aes(x = min_conc, y = min_conc)) +
+  geom_blank(aes(x = max_conc, y = max_conc))+
   geom_errorbar(aes(ymin=avconc_flp - sdconc_flp, ymax=avconc_flp + sdconc_flp), alpha=0.4) +
   geom_errorbarh(aes(xmin=avconc_lyso - sdconc_lyso, xmax=avconc_lyso + sdconc_lyso), alpha=0.4) +
   geom_abline(intercept = 0, slope = 1, linetype="dashed", color="red") +  # 1:1 line
   geom_text(data = label_pos_conc, aes(x = x, y = y, label = label),
             inherit.aes = FALSE,
-            hjust = 1.1, vjust = -0.5, size = 5, color = "red") +
+            hjust = -0.1, vjust = 1.3, size = 5, color = "red") +
   theme_bw() +  
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
   labs(y="Mixotroph Concentration FLP", x="Mixotroph Concentration LysoTracker") +
@@ -294,15 +308,17 @@ conc <- ggplot(mergedflplyso, aes(x=avconc_lyso, y=avconc_flp, color=Depth, shap
                                                  "FlowCytometry" = 16))+
   theme(text = element_text(size=18), legend.position="none")
 
-percent <- ggplot(mergedflplyso, aes(x=avpercent_lyso, y=avpercent_flp, color=Depth, shape=Method)) + 
+percent <- ggplot(plot_data, aes(x=avpercent_lyso, y=avpercent_flp, color=Depth, shape=Method)) + 
   geom_point(size=3, alpha=0.8) +
   facet_wrap(~Cruise, scales="free") +
+  geom_blank(aes(x = min_percent, y = min_percent)) +
+  geom_blank(aes(x = max_percent, y = max_percent))+
   geom_errorbar(aes(ymin=avpercent_flp - sdpercent_flp, ymax=avpercent_flp + sdpercent_flp), alpha=0.4) +
   geom_errorbarh(aes(xmin=avpercent_lyso - sdpercent_lyso , xmax=avpercent_lyso + sdpercent_lyso), alpha=0.4) +
   geom_abline(intercept = 0, slope = 1, linetype="dashed", color="red") +  # 1:1 line
   geom_text(data = label_pos_percent, aes(x = x, y = y, label = label),
             inherit.aes = FALSE,
-            hjust = 1.1, vjust = -0.5, size = 5, color = "red") +
+            hjust = -0.1, vjust = 1.3, size = 5, color = "red") +
   theme_bw() +  
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
   labs(y="Mixotroph Percent FLP", x="Mixotroph Percent LysoTracker") +
