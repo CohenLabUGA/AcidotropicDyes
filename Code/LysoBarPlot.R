@@ -62,7 +62,7 @@ tracker <- ggplot(trackerdata, aes(x = factor(Name, levels = resultsorder), y = 
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
   theme_classic() +
-  labs(x = "", y = "Proportion Stained LysoTracker", fill='Group') +
+  labs(x = "", y = "Percent Stained LysoTracker", fill='Group') +
   ggtitle("a)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = margin(10, 10, 30, 10),
@@ -79,7 +79,7 @@ sensor <- ggplot(sensordata, aes(x = factor(Name, levels = resultsorder), y = pe
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
   theme_classic() +
-  labs(x = "", y = "Proportion Stained LysoSensor", fill='Lineage') +
+  labs(x = "", y = "Percent Stained LysoSensor", fill='Lineage') +
   ggtitle("b)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
     plot.margin = margin(10, 10, 30, 10),

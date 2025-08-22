@@ -130,7 +130,7 @@ suppfig6 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
     size = 2,
     inherit.aes = FALSE) +
   scale_y_continuous(name = "Concentration of potential mixotrophs (cells/mL)",
-    sec.axis = sec_axis(~./coeff, name = "Proportion of mixotrophic nanoeukaryotes (T1–T0)")) +
+    sec.axis = sec_axis(~./coeff, name = "Percent of mixotrophic nanoeukaryotes (T1–T0)")) +
   scale_fill_manual(values = c("gray80", "gray20")) +
   theme_bw() +
   theme(axis.title.y.right = element_text(color = "red"), text = element_text(size = 14)) +

@@ -101,7 +101,7 @@ FLPpercent <- ggplot(flpdf, aes(x = jittered_x, y = avpercent, color = Depth, sh
   ) +
   ggtitle("c)")+
   facet_wrap(~Cruise, scales = "free_x") +
-  labs(y = expression(paste("Proportion of Mixotrophic Phototrophs FLP")), x="Station") + 
+  labs(y = expression(paste("Percent of Mixotrophic Phototrophs FLP")), x="Station") + 
   theme_bw() +
   scale_color_manual(values = c("DCM" = "gray", "Surface" = "black")) +
   theme(legend.position = 'none')+  theme(text = element_text(size=18) ) +

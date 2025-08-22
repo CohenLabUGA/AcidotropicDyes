@@ -84,7 +84,7 @@ table <- merged_data %>%
     Peak_Display_Control = "Control Peak ± SD",
     Change_Mean_Display = "Stained - Control Mean", 
     Change_Peak_Display = "Stained - Control Peak Fluroesence", 
-    DisplayPercent = "Proportion Stained")
+    DisplayPercent = "Percent Stained")
 table
 # ---- Save summary table as image ----
 gtsave(table, filename = "Figures/Table2.png")
