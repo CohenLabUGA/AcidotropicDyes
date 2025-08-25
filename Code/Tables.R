@@ -9,6 +9,7 @@ library(glue)
 #### Making of Table 1 ####
 ## Load in dataset for Table 1 and formate with superscripts##
 Table1 <- read_excel("Data/Table1.xlsx") %>%
+  mutate(`Approximate size range (µm)` = gsub(" to ", " - ", `Approximate size range (µm)`)) %>%
   mutate(
     Acquisition = case_when(
       Culture == "Gephyrocapsa oceanica (UGA06)" ~ glue("{Acquisition}<sup>4</sup>"),
@@ -43,7 +44,7 @@ gt_table <- Table1 %>%
   ) %>%
   cols_align(
     align = "center",
-    columns = c(`Temperature (ºC)`, `Light Intensity (µmol photons meter second)`, Metabolism)) %>%
+    columns = c(`Temperature (ºC)`, `Light Intensity (µmol photons meter second)`, Metabolism, `Approximate size range (µm)`)) %>%
   cols_width(
     Metabolism ~ px(150)
   ) %>%
