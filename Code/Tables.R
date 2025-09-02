@@ -12,14 +12,14 @@ Table1 <- read_excel("Data/Table1.xlsx") %>%
   mutate(`Approximate size range (µm)` = gsub(" to ", " - ", `Approximate size range (µm)`)) %>%
   mutate(
     Acquisition = case_when(
-      Culture == "Gephyrocapsa oceanica (UGA06)" ~ glue("{Acquisition}<sup>4</sup>"),
-      Culture == "Gephyrocapsa huxleyi (UGA13)" ~ glue("{Acquisition}<sup>4</sup>"),
-      Culture == "Tetraselmis chui (PLY429)" ~ glue("{Acquisition}<sup>5</sup>"),
-      Culture == "Odontella rostrata (UGA01)" ~ glue("{Acquisition}<sup>4</sup>"),
-      Culture == "Chaetoceros neogracile (RS19)" ~ glue("{Acquisition}<sup>6</sup>"),
-      Culture == "Geminigeria cryophila (CCMP2564)" ~ glue("{Acquisition}<sup>3</sup>"),
-      Culture == "Mantoniella antarctica (SL-175)" ~ glue("{Acquisition}<sup>3</sup>"),
-      Culture == "Pyramimonas tychotreta (I-9 Pyram)" ~ glue("{Acquisition}<sup>3</sup>"),
+      Culture == "Gephyrocapsa oceanica (UGA06)" ~ glue("{Acquisition}<sup>5</sup>"),
+      Culture == "Gephyrocapsa huxleyi (UGA13)" ~ glue("{Acquisition}<sup>5</sup>"),
+      Culture == "Tetraselmis chui (PLY429)" ~ glue("{Acquisition}<sup>6</sup>"),
+      Culture == "Odontella rostrata (UGA01)" ~ glue("{Acquisition}<sup>5</sup>"),
+      Culture == "Chaetoceros neogracile (RS19)" ~ glue("{Acquisition}<sup>7</sup>"),
+      Culture == "Geminigeria cryophila (CCMP2564)" ~ glue("{Acquisition}<sup>4</sup>"),
+      Culture == "Mantoniella antarctica (SL-175)" ~ glue("{Acquisition}<sup>4</sup>"),
+      Culture == "Pyramimonas tychotreta (I-9 Pyram)" ~ glue("{Acquisition}<sup>4</sup>"),
       
       TRUE ~ Acquisition)) %>%
   mutate(
@@ -28,9 +28,10 @@ Table1 <- read_excel("Data/Table1.xlsx") %>%
       Culture == "Gephyrocapsa huxleyi (UGA13)" ~ glue("{Metabolism}<sup>1</sup>"),
       Culture == "Tetraselmis sp. " ~ glue("{Metabolism}<sup>2</sup>"),
       Culture == "Tetraselmis chui (PLY429)" ~ glue("{Metabolism}<sup>2</sup>"),
-      Culture == "Geminigeria cryophila (CCMP2564)" ~ glue("{Metabolism}<sup>3</sup>"),
-      Culture == "Mantoniella antarctica (SL-175)" ~ glue("{Metabolism}<sup>3</sup>"),
-      Culture == "Pyramimonas tychotreta (I-9 Pyram)" ~ glue("{Metabolism}<sup>3</sup>"),
+      Culture == "Micromonas polaris (CCMP2099)" ~ glue("{Metabolism}<sup>3</sup>"),
+      Culture == "Geminigeria cryophila (CCMP2564)" ~ glue("{Metabolism}<sup>4</sup>"),
+      Culture == "Mantoniella antarctica (SL-175)" ~ glue("{Metabolism}<sup>4</sup>"),
+      Culture == "Pyramimonas tychotreta (I-9 Pyram)" ~ glue("{Metabolism}<sup>4</sup>"),
       TRUE ~ Metabolism))
 
 ## Format into gt table with sources at the bottom ##
@@ -52,10 +53,11 @@ gt_table <- Table1 %>%
     source_note = html(
       "<sup>1</sup>Ye et al. (2024), Biology ; Godrijan et al. (2020), Limnology and Oceanography<br>
       <sup>2</sup>This study<br>
-      <sup>3</sup>Gast et al. (2014), FEMS Microbiol Ecol<br>
-       <sup>4</sup>Quirk et al. (in revision), Limnology and Oceanography<br>
-     <sup>5</sup>Milford Strain Collection<br>
-      <sup>6</sup>Kellogg et al. (2022), Limnology and Oceanography<br>"))
+       <sup>3</sup>McKie-Krisberg & Sanders (2014), ISME; Wilken et al. (2019), Phil Trans R Soc B; Jimenez et al. (2021), J Phycol<br>
+      <sup>4</sup>Gast et al. (2014), FEMS Microbiol Ecol<br>
+       <sup>5</sup>Quirk et al. (in revision), Limnology and Oceanography<br>
+     <sup>6</sup>Milford Strain Collection<br>
+      <sup>7</sup>Kellogg et al. (2022), Limnology and Oceanography<br>"))
 
 gt_table
 

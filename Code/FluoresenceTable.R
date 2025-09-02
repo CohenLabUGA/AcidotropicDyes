@@ -17,6 +17,8 @@ library(patchwork)
 data <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
   filter(Stain %in% c("Control", "Tracker"))
 
+sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
+  filter(Stain %in% c("Control", "Sensor"))
 # ---- Load and summarize LysoTracker biological replicate data ----
 # Summarize percent of stained cells and biological replicate count for each culture data load in and calculate av and std of biological replicates
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
@@ -28,6 +30,16 @@ trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
     .groups = "drop") %>%
   mutate(percent=mean_Lyso*100, std=std*100)
 trackerdata$Culture <- trackerdata$Name
+
+sensorstaineddata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoSensor") %>%
+  group_by(Name, Place, Metabolism, Type) %>%
+  dplyr:: summarise(
+    mean_Lyso = mean(AvSensor, na.rm = TRUE),
+    n_bio = n(),
+    std=sd(AvSensor),
+    .groups = "drop") %>%
+  mutate(percent=mean_Lyso*100, std=std*100)
+sensorstaineddata$Culture <- sensorstaineddata$Name
 
 # =========================================
 # PART 2: Summarize Fluorescence Intensities
@@ -55,39 +67,77 @@ summary_table <- data %>%
     Peak_Change_Avg  = mean(Peak_Change, na.rm = TRUE),
     Peak_Change_SD   = sd(Peak_Change, na.rm = TRUE)) 
 
-# ---- Merge fluorescence and staining data ----
-merged_data <- left_join(summary_table, trackerdata, by = "Culture") 
+summarysensor <- sensordata %>%
+  select(Culture, Replicate, Stain, VioletMean) %>% 
+  pivot_wider(names_from = Stain, values_from = c(VioletMean)) %>% 
+  drop_na(Sensor, Control) %>% 
+  mutate(Change = Sensor - Control) %>%
+  group_by(Culture) %>%
+  dplyr::summarise(Mean_Sensor = mean(Sensor),
+                   Mean_Control = mean(Control),
+                   SD_Control = mean(Control),
+                   SD_Sensor = sd(Sensor), 
+                   Mean_Sensor_Change=mean(Change), 
+                   SD_Sensor_Change=sd(Change))
+meanfsc <- data %>%
+  group_by(Culture) %>%
+  dplyr::summarise(MeanFSC= mean(FSCMean))
 
+# ---- Merge fluorescence and staining data ----
+merged_data_some <- left_join(summary_table, trackerdata, by = "Culture") 
+merged_data <- left_join(merged_data_some, meanfsc, by = "Culture") %>% 
+  mutate(normalizedgreen=Mean_Tracker_Avg / MeanFSC) %>%
+  mutate(normalizedgreensd=Mean_Tracker_SD / MeanFSC)
+
+merged_data_some <- left_join(summarysensor, sensorstaineddata, by = "Culture") 
+merged_sensor <- left_join(merged_data_some, meanfsc, by = "Culture") %>% 
+  mutate(normalizedfsc=(Mean_Sensor / MeanFSC)) %>%
+  mutate(normalizedfscsd=(SD_Sensor / MeanFSC)) 
 # =========================================
 # PART 3: Generate Summary Table for Manuscript
 # =========================================
 
 # ---- Format data for display ----
-table <- merged_data %>%
+trackertable <- summary_table %>%
   mutate(
-    Mean_Display_Tracker = paste0(round(Mean_Tracker_Avg, 2), " ± ", round(Mean_Tracker_SD, 2)),
-    Mean_Display_Control = paste0(round(Mean_Control_Avg, 2), " ± ", round(Mean_Control_SD, 2)),
-    Peak_Display_Tracker = paste0(round(Peak_Tracker_Avg, 2), " ± ", round(Peak_Tracker_SD, 2)),
-    Peak_Display_Control = paste0(round(Peak_Control_Avg, 2), " ± ", round(Peak_Control_SD, 2)),
-    Change_Mean_Display = paste0(round(Mean_Change_Avg, 2), " ± ", round(Mean_Change_SD, 2)),
-    Change_Peak_Display = paste0(round(Peak_Change_Avg, 2), " ± ", round(Peak_Change_SD, 2)),
-    DisplayPercent=paste(round(percent, 2), " ± ", round(std, 2))) %>%
-  select(Culture, Mean_Display_Tracker, Mean_Display_Control, 
-         Peak_Display_Tracker, Peak_Display_Control, Change_Mean_Display, Change_Peak_Display, DisplayPercent) %>%
+    LysoT_Stained_Mean   = paste0(round(Mean_Tracker_Avg, 2), " ± ", round(Mean_Tracker_SD, 2)),
+    LysoT_Control_Mean   = paste0(round(Mean_Control_Avg, 2), " ± ", round(Mean_Control_SD, 2)),
+    Tracker_Minus_Control = paste0(round(Mean_Change_Avg, 2), " ± ", round(Mean_Change_SD, 2))
+  ) %>%
+  select(Culture, LysoT_Stained_Mean, LysoT_Control_Mean, Tracker_Minus_Control)
+
+sensortable <- summarysensor %>%
+  left_join(meanfsc, by="Culture") %>%
+  mutate(
+    LysoS_Stained_Mean   = paste0(round(Mean_Sensor, 2), " ± ", round(SD_Sensor, 2)),
+    LysoS_Control_Mean   = paste0(round(Mean_Control, 2), " ± ", round(SD_Control, 2)),
+    Sensor_Minus_Control = paste0(round(Mean_Sensor_Change, 2), " ± ", round(SD_Sensor_Change, 2))  # already subtracted in summarysensor
+  ) %>%
+  select(Culture, LysoS_Stained_Mean, LysoS_Control_Mean, Sensor_Minus_Control, MeanFSC)
+
+# --- Merge Tracker + Sensor + Control ---
+supptablefluorescence <- trackertable %>%
+  left_join(sensortable, by="Culture") %>%
+  select(
+    Culture,
+    LysoT_Stained_Mean, LysoT_Control_Mean, Tracker_Minus_Control,
+    LysoS_Stained_Mean, LysoS_Control_Mean, Sensor_Minus_Control,
+    MeanFSC
+  ) %>%
   gt() %>%
-  tab_header(
-    title = "Fluorescence Intensity: LysoTracker Stained vs Control (Mean ± SD)") %>%
+  tab_header(title = "Mean Fluorescence (Mean ± SD)") %>%
   cols_label(
-    Mean_Display_Tracker = "Stained Mean ± SD",
-    Mean_Display_Control = "Control Mean ± SD",
-    Peak_Display_Tracker = "Stained Peak ± SD",
-    Peak_Display_Control = "Control Peak ± SD",
-    Change_Mean_Display = "Stained - Control Mean", 
-    Change_Peak_Display = "Stained - Control Peak Fluroesence", 
-    DisplayPercent = "Percent Stained")
-table
+    LysoT_Stained_Mean   = "LysoT Stained Mean",
+    LysoT_Control_Mean   = "LysoT Control Mean",
+    Tracker_Minus_Control = "Tracker – Control",
+    LysoS_Stained_Mean   = "LysoS Stained Mean",
+    LysoS_Control_Mean   = "LysoS Control Mean",
+    Sensor_Minus_Control  = "Sensor – Control",
+    MeanFSC              = "Mean FSC"
+  )
+supptablefluorescence
 # ---- Save summary table as image ----
-gtsave(table, filename = "Figures/Table2.png")
+gtsave(supptablefluorescence, filename = "Figures/SupplementalTable4.png", vwidth = 1800, vheight = 3200, zoom = 3)
 
 # =========================================
 # PART 4: Generate Fluorescence Change Plot
@@ -95,18 +145,42 @@ gtsave(table, filename = "Figures/Table2.png")
 # ---- Scatter plot of mean fluorescence change vs percent stained ----
 resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
 
-meanchange <- ggplot(merged_data, aes(x = factor(Culture, levels = resultsorder), y = Mean_Change_Avg, color=percent)) +
+
+normalizedfsctracker <- ggplot(merged_data, aes(x = factor(Culture, levels=resultsorder), y = (normalizedgreen+.001), color=percent)) +
   scale_color_gradientn(colors = c("black", "purple", "yellow3"))+
   geom_point(size = 4) +
-  geom_errorbar(aes(ymin = Mean_Change_Avg - Mean_Change_SD, ymax=Mean_Change_Avg + Mean_Change_SD), width=0.7)+
-  labs(y = "Change in Mean Green Fluoresence\n(log scale)",
+  geom_errorbar(aes(
+    ymin = pmax((normalizedgreen+.001) - (normalizedgreensd+.001), 1e-3),   # lower bound can't go below ~0
+    ymax = (normalizedgreen+.001) + (normalizedgreensd+.001)
+  ), width = 0.7) +
+  labs(title = "",
+       y = expression("log"[10]*"(Δ Green Fluorescence / FSC)"),
        x = "Culture",
        color = "Percent Stained\nLysoTracker") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
-        text = element_text(size=16) )+
+        text = element_text(size=14) )+
+  ggtitle("a)")+
   scale_y_log10()
-meanchange
+normalizedfsctracker
+
+normalizedfscsensor <- ggplot(merged_sensor, aes(x = factor(Culture, levels=resultsorder), y = (normalizedfsc+0.001), color=percent)) +
+  scale_color_gradientn(colors = c("black", "purple", "yellow3"))+
+  geom_point(size = 4) +
+  geom_errorbar(aes(
+    ymin =(normalizedfsc+0.001) - (normalizedfscsd+0.001),
+    ymax = (normalizedfsc+0.001) + (normalizedfscsd+0.001)
+  ), width = 0.7)+
+  labs(title = "",
+       y = expression("log"[10]*"(Δ Blue Fluorescence / FSC)"),
+       x = "Culture",
+       color = "Percent Stained\nLysoSensor") +
+  ggtitle("b)")+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        text = element_text(size=14) ) +
+  scale_y_log10()
+normalizedfscsensor
 
 # ---- Generate bar plot to show culture types in the same manner as figure 2 ----
 type_bar <- merged_data %>%
@@ -128,10 +202,10 @@ type_plot <- ggplot(type_bar, aes(x = factor(Culture, levels = resultsorder), y 
     plot.margin = margin(0, 20, 0, 20), text = element_text(size=16))
 
 # ---- Combine scatter plot and bar plot of culture type----
-combined_plot <- meanchange / type_plot+ 
-  plot_layout(heights = c(1, 0.05)) 
+combined_plot <- normalizedfsctracker/normalizedfscsensor / type_plot+ 
+  plot_layout(heights = c(1, 1,0.05)) 
 combined_plot
 
 # ---- Save Figure 3 ----
-ggsave("Figures/Figure3.tiff", plot = combined_plot, width = 12, height = 9, units = "in", dpi = 300)
+ggsave("Figures/Figure3.tiff", plot = combined_plot, width = 10, height = 10, units = "in", dpi = 300)
 

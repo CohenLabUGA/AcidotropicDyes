@@ -32,7 +32,7 @@ color <- c("Diatom"= "#CAB2D6",
 
 # ---- Load LysoTracker data ----
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
-  group_by(Name, FullNames, Place, Metabolism, Type) %>%
+  group_by(Name, Place, Metabolism, Type) %>%
   dplyr:: summarise(
     mean_Lyso = mean(Lyso, na.rm = TRUE),
     n_bio = n(),
@@ -42,7 +42,7 @@ trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
 
 # ---- Load LysoSensor data ----
 sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoSensor")  %>%
-  group_by(Name, FullNames, Place, Metabolism, Type) %>%
+  group_by(Name, Place, Metabolism, Type) %>%
   dplyr::summarise(
     mean_Lyso = mean(AvSensor, na.rm = TRUE),
     n_bio = n(),
