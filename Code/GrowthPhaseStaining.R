@@ -31,5 +31,5 @@ graph <- ggplot(df, aes(x = factor(Type, levels = c("Stationary", "Exponential",
   
 
 # Save plot
-ggsave("Figures/SuppFigGrowthPhase.tiff", plot = graph, width = 8, height = 8, units = "in", dpi = 300)
+ggsave("Figures/SuppFig1.tiff", plot = graph, width = 8, height = 8, units = "in", dpi = 300)
 

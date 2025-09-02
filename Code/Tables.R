@@ -65,13 +65,13 @@ gt_table
 gtsave(gt_table, filename = "Figures/Table1.png", vwidth = 1800, vheight = 3200, zoom = 3)
 #### Making of supplemental table 1 ####
 # Create data frame
-supptable2 <- tibble::tibble(
+supptable3 <- tibble::tibble(
   Station = c("1", "2", "4", "7", "9", "X"),
   `BioRepSUR` = c(1, 1, 2, 1, 1, 1),
   `BioRepSCM` = c(1, 1, 1, 2, 2, 1))
 
 # Format into gt table
-gt_rep_table <- supptable2 %>%
+gt_rep_table <- supptable3 %>%
   gt() %>%
   cols_label(Station = "Station",
              `BioRepSUR` = "Biological Replicates\nSurface",
@@ -86,7 +86,7 @@ gtsave(gt_rep_table, filename = "Figures/SuppTable3.png")
 #### Making of Supplemental Table of Flow Cytometer Values ####
 data <- read_excel("Data/FlowCytometerInfo.xlsx") 
 
-supp1table <- data %>%
+supp2table <- data %>%
   gt() %>%
   tab_spanner(label = "Gain and Voltage Settings",
     columns = c(
@@ -107,6 +107,6 @@ supp1table <- data %>%
     heading.title.font.size = 16) %>%
   cols_align(align = "center")
 
-supp1table
+supp2table
 
-gtsave(supp1table, filename = "Figures/SuppTable1.png", vwidth = 1500, vheight = 3200, zoom = 3)
+gtsave(supp2table, filename = "Figures/SuppTable2.png", vwidth = 1500, vheight = 3200, zoom = 3)

@@ -103,7 +103,7 @@ ggsave("Figures/Figure2.tiff", plot = final, width = 10, height = 10, units = "i
 # ========================================
 # Format dataframes
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
-  group_by(Name, FullNames, Place, Metabolism, Type, Cytometer) %>%
+  group_by(Name, Place, Metabolism, Type, Cytometer) %>%
   dplyr:: summarise(
     mean_Lyso = mean(Lyso, na.rm = TRUE),
     n_bio = n(),
@@ -120,31 +120,31 @@ sensordata_mod <- sensordata %>%
 
 # Combine lysotracker and lysosensor data
 combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
-  select(FullNames, Source, percent, std, n_bio) %>%
+  select(Name, Source, percent, std, n_bio) %>%
   mutate(
     value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std))
 
 # Add in the range of cell concentrations 
 cellconcrange <- read_excel("Data/CultureLysoData.xlsx") %>%
-  group_by(FullNames) %>%
+  group_by(Name) %>%
   dplyr::summarise(cellrange = paste0(round(min(MixoConc, na.rm = TRUE), -1), " – ", round(max(MixoConc, na.rm = TRUE), -1)))
   
   
 # Pivot dataframe wider 
 wide_df <- combined_df %>%
-  select(FullNames, Source, value) %>%
+  dplyr::select(Name, Source, value) %>%
   pivot_wider(names_from = Source, values_from = value)
 
 table_df <- wide_df %>%
-  left_join(cellconcrange, by = "FullNames")
+  left_join(cellconcrange, by = "Name")
 
 
 # Format table
 table <- table_df %>%
-  arrange(FullNames) %>%
+  arrange(Name) %>%
   gt() %>%
   cols_label(
-    FullNames = "Culture Name",
+    Name = "Culture Name",
     `LysoTracker_CytPix` = "LysoTracker (CytPix)",
     `LysoTracker_Guava` = "LysoTracker (Guava)",
     LysoSensor = "LysoSensor (CytPix)", 
@@ -154,5 +154,5 @@ table <- table_df %>%
 table
 
 # Save table
-gtsave(table, filename = "Figures/SuppTable2.png", vwidth = 1500, vheight = 3200, zoom = 3)
+gtsave(table, filename = "Figures/SuppTable1.png", vwidth = 1500, vheight = 3200, zoom = 3)
 

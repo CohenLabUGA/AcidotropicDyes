@@ -238,8 +238,8 @@ br <- ggplot(flpdf, aes(x = Station, color = Depth, shape=Method)) +
 br
 
 # ---- Combine and save Supplemental Fig 10 ----
-supp11 <- grid.arrange(br, csgr, nrow=1)
-ggsave("Figures/SuppFig11.tiff", plot = supp11, width = 16, height = 8, units = "in", dpi = 300)
+supp10 <- grid.arrange(br, csgr, nrow=1)
+ggsave("Figures/SuppFig10.tiff", plot = supp10, width = 16, height = 8, units = "in", dpi = 300)
 
 
 # ---- Create supplemental figure comparison ----
@@ -365,3 +365,4 @@ bland_altman_stats <- mergedflplyso %>%
     loa_lower_percent = mean_diff_percent - 1.96 * sd_diff_percent,
     loa_upper_percent = mean_diff_percent + 1.96 * sd_diff_percent,
     mean_measurement_percent = mean((avpercent_flp + avpercent_lyso) / 2))
+
