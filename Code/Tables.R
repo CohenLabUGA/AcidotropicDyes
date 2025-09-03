@@ -9,7 +9,7 @@ library(glue)
 #### Making of Table 1 ####
 ## Load in dataset for Table 1 and formate with superscripts##
 Table1 <- read_excel("Data/Table1.xlsx") %>%
-  mutate(`Approximate size range (µm)` = gsub(" to ", " - ", `Approximate size range (µm)`)) %>%
+  mutate(`CytPixSize` = gsub(" to ", " - ", `CytPixSize`)) %>%
   mutate(
     Acquisition = case_when(
       Culture == "Gephyrocapsa oceanica (UGA06)" ~ glue("{Acquisition}<sup>5</sup>"),
@@ -37,15 +37,16 @@ Table1 <- read_excel("Data/Table1.xlsx") %>%
 ## Format into gt table with sources at the bottom ##
 gt_table <- Table1 %>%
   gt() %>%
-  fmt_markdown(columns = vars(Acquisition, Metabolism)) %>%
+  fmt_markdown(columns = vars(Acquisition, Metabolism, CytPixSize)) %>%
   cols_label(
     `Light Intensity (µmol photons meter second)` := 
       html("Light Intensity<br>(µmol photons m<sup>−2</sup> s<sup>−1</sup>)"),
-    `Temperature (ºC)` := "Temperature (°C)"
+    `Temperature (ºC)` := "Temperature (°C)", 
+    `CytPixSize` := "CytPix Mean Size Range (µm)"
   ) %>%
   cols_align(
     align = "center",
-    columns = c(`Temperature (ºC)`, `Light Intensity (µmol photons meter second)`, Metabolism, `Approximate size range (µm)`)) %>%
+    columns = c(`Temperature (ºC)`, `Light Intensity (µmol photons meter second)`, Metabolism, `CytPixSize`)) %>%
   cols_width(
     Metabolism ~ px(150)
   ) %>%
@@ -57,7 +58,8 @@ gt_table <- Table1 %>%
       <sup>4</sup>Gast et al. (2014), FEMS Microbiol Ecol<br>
        <sup>5</sup>Quirk et al. (in revision), Limnology and Oceanography<br>
      <sup>6</sup>Milford Strain Collection<br>
-      <sup>7</sup>Kellogg et al. (2022), Limnology and Oceanography<br>"))
+      <sup>7</sup>Kellogg et al. (2022), Limnology and Oceanography<br>
+      <sup>8</sup>Simon et al. (2017), Protist<br>"))
 
 gt_table
 

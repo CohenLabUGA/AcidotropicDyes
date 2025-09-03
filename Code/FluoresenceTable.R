@@ -137,7 +137,7 @@ supptablefluorescence <- trackertable %>%
   )
 supptablefluorescence
 # ---- Save summary table as image ----
-gtsave(supptablefluorescence, filename = "Figures/SupplementalTable4.png", vwidth = 1800, vheight = 3200, zoom = 3)
+gtsave(supptablefluorescence, filename = "Figures/SuppTable4.png", vwidth = 1800, vheight = 3200, zoom = 3)
 
 # =========================================
 # PART 4: Generate Fluorescence Change Plot
