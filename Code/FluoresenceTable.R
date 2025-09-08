@@ -19,7 +19,8 @@ data <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") 
 
 sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
   filter(Stain %in% c("Control", "Sensor"))
-# ---- Load and summarize LysoTracker biological replicate data ----
+
+# ---- Load and summarize acidotropic dye staining data ----
 # Summarize percent of stained cells and biological replicate count for each culture data load in and calculate av and std of biological replicates
 trackerdata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTracker") %>%
   group_by(Name, Place, Metabolism, Type) %>%
@@ -46,7 +47,7 @@ sensorstaineddata$Culture <- sensorstaineddata$Name
 # =========================================
 # ---- Calculate mean/SD of fluorescence changes between Control and Tracker staining ----
 summary_table <- data %>%
-  select(Culture, Replicate, Stain, Mean, Peak) %>% 
+  dplyr::select(Culture, Replicate, Stain, Mean, Peak) %>% 
   pivot_wider(names_from = Stain, values_from = c(Mean, Peak)) %>% 
   drop_na(Mean_Tracker, Mean_Control) %>% 
   mutate(
@@ -68,14 +69,14 @@ summary_table <- data %>%
     Peak_Change_SD   = sd(Peak_Change, na.rm = TRUE)) 
 
 summarysensor <- sensordata %>%
-  select(Culture, Replicate, Stain, VioletMean) %>% 
+  dplyr::select(Culture, Replicate, Stain, VioletMean) %>% 
   pivot_wider(names_from = Stain, values_from = c(VioletMean)) %>% 
   drop_na(Sensor, Control) %>% 
   mutate(Change = Sensor - Control) %>%
   group_by(Culture) %>%
   dplyr::summarise(Mean_Sensor = mean(Sensor),
                    Mean_Control = mean(Control),
-                   SD_Control = mean(Control),
+                   SD_Control = sd(Control),
                    SD_Sensor = sd(Sensor), 
                    Mean_Sensor_Change=mean(Change), 
                    SD_Sensor_Change=sd(Change))
@@ -83,7 +84,7 @@ meanfsc <- data %>%
   group_by(Culture) %>%
   dplyr::summarise(MeanFSC= mean(FSCMean))
 
-# ---- Merge fluorescence and staining data ----
+# ---- Merge fluorescence and staining data and calculate normalized green fluoresence (by FSC) ----
 merged_data_some <- left_join(summary_table, trackerdata, by = "Culture") 
 merged_data <- left_join(merged_data_some, meanfsc, by = "Culture") %>% 
   mutate(normalizedgreen=Mean_Tracker_Avg / MeanFSC) %>%
@@ -102,23 +103,21 @@ trackertable <- summary_table %>%
   mutate(
     LysoT_Stained_Mean   = paste0(round(Mean_Tracker_Avg, 2), " ± ", round(Mean_Tracker_SD, 2)),
     LysoT_Control_Mean   = paste0(round(Mean_Control_Avg, 2), " ± ", round(Mean_Control_SD, 2)),
-    Tracker_Minus_Control = paste0(round(Mean_Change_Avg, 2), " ± ", round(Mean_Change_SD, 2))
-  ) %>%
-  select(Culture, LysoT_Stained_Mean, LysoT_Control_Mean, Tracker_Minus_Control)
+    Tracker_Minus_Control = paste0(round(Mean_Change_Avg, 2), " ± ", round(Mean_Change_SD, 2))) %>%
+  dplyr::select(Culture, LysoT_Stained_Mean, LysoT_Control_Mean, Tracker_Minus_Control)
 
 sensortable <- summarysensor %>%
   left_join(meanfsc, by="Culture") %>%
   mutate(
     LysoS_Stained_Mean   = paste0(round(Mean_Sensor, 2), " ± ", round(SD_Sensor, 2)),
     LysoS_Control_Mean   = paste0(round(Mean_Control, 2), " ± ", round(SD_Control, 2)),
-    Sensor_Minus_Control = paste0(round(Mean_Sensor_Change, 2), " ± ", round(SD_Sensor_Change, 2))  # already subtracted in summarysensor
-  ) %>%
-  select(Culture, LysoS_Stained_Mean, LysoS_Control_Mean, Sensor_Minus_Control, MeanFSC)
+    Sensor_Minus_Control = paste0(round(Mean_Sensor_Change, 2), " ± ", round(SD_Sensor_Change, 2))) %>%
+  dplyr::select(Culture, LysoS_Stained_Mean, LysoS_Control_Mean, Sensor_Minus_Control, MeanFSC)
 
 # --- Merge Tracker + Sensor + Control ---
 supptablefluorescence <- trackertable %>%
   left_join(sensortable, by="Culture") %>%
-  select(
+  dplyr::select(
     Culture,
     LysoT_Stained_Mean, LysoT_Control_Mean, Tracker_Minus_Control,
     LysoS_Stained_Mean, LysoS_Control_Mean, Sensor_Minus_Control,

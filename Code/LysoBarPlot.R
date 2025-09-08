@@ -58,16 +58,16 @@ sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoSensor")  %>%
 # ---- LysoTracker Barplot ----
 tracker <- ggplot(trackerdata, aes(x = factor(Name, levels = resultsorder), y = percent)) + 
   geom_bar(stat = "identity", 
-    aes(fill = Type))+
+           aes(fill = Type))+
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
   theme_classic() +
   labs(x = "", y = "Percent Stained LysoTracker", fill='Group') +
   ggtitle("a)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = margin(10, 10, 30, 10),
-    text = element_text(size=16), 
-    legend.position = "none") +
+        plot.margin = margin(10, 10, 30, 10),
+        text = element_text(size=16), 
+        legend.position = "none") +
   scale_fill_manual(values = color)+
   scale_y_continuous(limits = c(-5, 110), breaks = seq(0, 100, 25))
 tracker
@@ -75,16 +75,16 @@ tracker
 # ---- LysoSensor Barplot ----
 sensor <- ggplot(sensordata, aes(x = factor(Name, levels = resultsorder), y = percent)) + 
   geom_bar(stat = "identity", 
-    aes(fill = Type))+
+           aes(fill = Type))+
   geom_errorbar(aes(ymin = percent -std, ymax = percent + std), 
                 width = 0.2) +
   theme_classic() +
   labs(x = "", y = "Percent Stained LysoSensor", fill='Lineage') +
   ggtitle("b)")+
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-    plot.margin = margin(10, 10, 30, 10),
-    text = element_text(size=16), 
-    legend.position = "bottom") +
+        plot.margin = margin(10, 10, 30, 10),
+        text = element_text(size=16), 
+        legend.position = "bottom") +
   scale_fill_manual(values = color)+
   scale_y_continuous(limits = c(-5, 110), breaks = seq(0, 100, 25))
 sensor
@@ -120,7 +120,7 @@ sensordata_mod <- sensordata %>%
 
 # Combine lysotracker and lysosensor data
 combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
-  select(Name, Source, percent, std, n_bio) %>%
+  dplyr::select(Name, Source, percent, std, n_bio) %>%
   mutate(
     value = sprintf("(%d); %.2f ± %.2f", n_bio, percent, std))
 
@@ -128,8 +128,8 @@ combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
 cellconcrange <- read_excel("Data/CultureLysoData.xlsx") %>%
   group_by(Name) %>%
   dplyr::summarise(cellrange = paste0(round(min(MixoConc, na.rm = TRUE), -1), " – ", round(max(MixoConc, na.rm = TRUE), -1)))
-  
-  
+
+
 # Pivot dataframe wider 
 wide_df <- combined_df %>%
   dplyr::select(Name, Source, value) %>%

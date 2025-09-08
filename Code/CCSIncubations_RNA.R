@@ -58,17 +58,21 @@ data <- data.frame(timepoint = as.factor(incubations$Timepoint),
 # Perform one-way ANOVA per treatment, calculate posthoc pairwise comparisons
 df_letters <- data %>%
   group_by(treatment) %>%
-  nest() %>%
-  rowwise() %>%
+  nest() %>% # Nest each treatment's data into its own tibble
+  rowwise() %>% # Iterate row by row so each treatment is processed independently
   mutate(
-    fit = list(lm(result ~ timepoint, data = data)),
-    emm = list(emmeans::emmeans(fit, "timepoint", type = "response")),
-    cld = list(multcomp::cld(emm, Letters = LETTERS, reverse = TRUE))
+    fit = list(lm(result ~ timepoint, data = data)), # Fit a linear model by timepoint within each treatment (with two groups and a categorical predictor, same as t-test)
+    emm = list(emmeans::emmeans(fit, "timepoint", type = "response")), # compute estimated marginal means for each timepoint
+    cld = list(multcomp::cld(emm, Letters = LETTERS, reverse = TRUE)) # Run letter display to assign letters to timepoints based on posthoc pairwise comparisons
   ) %>%
   select(-data, -fit, -emm) %>%
   unnest(cld) %>%
   mutate(cld = trimws(.group)) %>%
   select(-.group)
+
+# Confirm with strict t-test
+t_test <- t.test(result ~ timepoint, data = data)
+print(t_test)
 
 # Plot LysoTracker staining in iron manipulation experiments
 lysotrackerplot <- ggplot(df_letters, aes(x = timepoint, y = emmean, fill = treatment)) +

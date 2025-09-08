@@ -1,7 +1,6 @@
 # ---- Load Required Libraries ----
 library(cowplot)
 library(gtools)
-library(grid)
 library(readxl)
 library(arsenal)
 library(ggpmisc)
@@ -13,7 +12,6 @@ library(dplyr)
 library(grid)
 library(tiff)
 library(ggforce)
-library(cowplot)
 library(broom)
 set.seed(123)
 
@@ -244,12 +242,12 @@ ggsave("Figures/SuppFig10.tiff", plot = supp10, width = 16, height = 8, units = 
 
 # ---- Create supplemental figure comparison ----
 lysodf_tomerge <- lysodf %>%
-  select(Station, avpercent,sdpercent,avmixo,sdmixo,Cruise,DepthCode) %>%
+  dplyr::select(Station, avpercent,sdpercent,avmixo,sdmixo,Cruise,DepthCode) %>%
   dplyr::rename(Depth = DepthCode, 
                 avconc = avmixo, 
                 sdconc =sdmixo) 
 flpdf_tomerge <- flpdf %>%
-  select(Station, avpercent,sdpercent,avconc,sdconc,Cruise,Depth, Method)
+  dplyr::select(Station, avpercent,sdpercent,avconc,sdconc,Cruise,Depth, Method)
 
 mergedflplyso <- full_join(
   lysodf_tomerge,

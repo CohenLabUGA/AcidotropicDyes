@@ -15,12 +15,12 @@ library(stringr)
 
 # ----------------------------------------------
 # Step 1: Load and preprocess raw data, 
-  # calculating mixotroph percent and nanoeukaryote concentrations
+# calculating mixotroph percent and nanoeukaryote concentrations
 # ----------------------------------------------
 df <- read_excel("Data/NES_FLP_FCM.xlsx") %>%
   mutate(Timepoint = factor(Timepoint),
-    percentmixo = mixo / (nano + mixo),
-    totalnano = nano + mixo)
+         percentmixo = mixo / (nano + mixo),
+         totalnano = nano + mixo)
 
 # ----------------------------------------------
 # Step 2: Summarize percent mixotrophs by groups
@@ -88,17 +88,18 @@ daynightsub <- df %>%
     percentmixo = (diff / avnano) * 100,
     Timepoint = factor(1),
     Depth = if_else(Place == "SCM", "DCM", Place)) %>%
-  select(Station, Type, Place, percentmixo, Timepoint, Depth) %>%
+  dplyr::select(Station, Type, Place, percentmixo, Timepoint, Depth) %>%
   drop_na()
 
 # ----------------------------------------------
 # Step 7: Relabel Type and Place factors for consistency
 # ----------------------------------------------
 relabeller <- function(x) {
-  x <- recode(x, "Ecoli" = "E. coli", "Green" = "Microspheres", "DCM" = "SCM")
-  return(x)
+  dplyr::recode(x,
+                Ecoli = "E. coli",
+                Green = "Microspheres",
+                DCM   = "SCM")
 }
-
 daynight <- daynight %>%
   filter(Timepoint %in% c("0", "1")) %>%
   mutate(
@@ -130,7 +131,7 @@ suppfig6 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
     size = 2,
     inherit.aes = FALSE) +
   scale_y_continuous(name = "Concentration of potential mixotrophs (cells/mL)",
-    sec.axis = sec_axis(~./coeff, name = "Percent of mixotrophic nanoeukaryotes (T1–T0)")) +
+                     sec.axis = sec_axis(~./coeff, name = "Percent of mixotrophic nanoeukaryotes (T1–T0)")) +
   scale_fill_manual(values = c("gray80", "gray20")) +
   theme_bw() +
   theme(axis.title.y.right = element_text(color = "red"), text = element_text(size = 14)) +

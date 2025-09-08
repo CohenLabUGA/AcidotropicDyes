@@ -37,7 +37,8 @@ submixoconc <- nesflpfcm %>%
   mutate(submixoconc= `1`-`0`)
 
 # ---- Merge and calculate percent mixotroph contribution ----
-calcpercent <- merge(avnano, submixoconc) %>%
+calcpercent <- avnano %>%
+  left_join(submixoconc, by=c("Station", "Place", "Time")) %>%
   mutate(percentmixo=(submixoconc/(avnano)*100)) 
 
 # ---- Add bacterial data ----
@@ -73,7 +74,7 @@ blankstationsNES <- data.frame(
   avpercent=NA, sdpercent=NA, 
   avnano=NA, sdnano=NA,
   avnanoBR=NA, sdnanoBR=NA, 
-  Cruise="New England Shelf", 
+  Cruise="North East Shelf", 
   Depth="Surface")
 blankstationsNES$Station <- as.factor(blankstationsNES$Station)
 
@@ -105,7 +106,7 @@ ccsgrazing <- read_excel("Data/CCSRawFLP.xlsx") %>%
   group_by(Station) %>%
   mutate(CSGR=(mixo_cellsmL/red_cellsmL) * (bacteria/(10^5))) %>%
   mutate(nanoBR = ((mixo_cellsmL/red_cellsmL) * mixo_cellsmL * (bacteria/10^5)))%>%
-  mutate(loggrazing=log(CSGR)) %>%
+  mutate(loggrazing=log10(CSGR)) %>%
   dplyr::summarise(
     avbac=mean(bacteria), sdbac=sd(bacteria), 
     avpercent=mean(percentmixo), sdpercent=sd(percentmixo),

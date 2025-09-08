@@ -1,22 +1,15 @@
 # ---- Load Required Libraries ----
 # Libraries for data manipulation, plotting, statistical testing, and reading files
-
-library(gtools)
-library(grid)
 library(readxl)
-library(arsenal)
-library(ggpmisc)
-library(gridExtra)
-library(caret)
 library(tidyr)
-library(stringr)
 library(dplyr)
-library(RColorBrewer)
+library(car)
+library(broon)
 
 
 # ---- Define Function: Test Biomass Differences by Cruise ----
 # This function performs either ANOVA or Kruskal-Wallis tests across cruises
-  # for each biomass-related variable provided.
+# for each biomass-related variable provided.
 # Optionally performs post-hoc tests (Tukey HSD for ANOVA, pairwise Wilcoxon for Kruskal).
 
 test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise = TRUE) {
@@ -24,17 +17,17 @@ test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise
   
   for (var in variables) {
     formula <- as.formula(paste(var, "~ Cruise"))
-  
-    # Perform ANOVA or Kruskal-Wallis
-    test_result <- if (method == "anova") {
-      aov(formula, data = data)
-    } else {
-      kruskal.test(formula, data = data)
-    }
-    # Extract p-value
-    pval <- if (method == "anova") summary(test_result)[[1]][["Pr(>F)"]][1] else test_result$p.value
     
-    # Determine significance symbol
+    # Perform test
+    if (method == "anova") {
+      test_result <- aov(formula, data = data)
+      pval <- summary(test_result)[[1]][["Pr(>F)"]][1]
+    } else {
+      test_result <- kruskal.test(formula, data = data)
+      pval <- test_result$p.value
+    }
+    
+    # Significance stars
     significance <- if (pval < 0.001) {
       "***"
     } else if (pval < 0.01) {
@@ -58,23 +51,23 @@ test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise
       results[[var]]$pairwise <- pw$p.value
     } else if (pairwise && method == "anova" && pval < 0.05) {
       tukey <- TukeyHSD(test_result)
-      results[[var]]$pairwise <- tukey$Cruise
+      results[[var]]$pairwise <- broom::tidy(tukey)
     }
   }
   
-  # Print summary to console
+  # Print summary
   cat("\n--- Biomass Cruise Comparison Results ---\n")
   for (var in names(results)) {
     r <- results[[var]]
     cat(paste0(var, " (", r$test, "): p = ", r$p.value, " [", r$significance, "]\n"))
     if (!is.null(r$pairwise)) {
       cat("    Significant pairwise differences:\n")
-      sig_pw <- if (r$test == "anova") {
-        r$pairwise[r$pairwise[, "p adj"] < 0.05, , drop = FALSE]
+      if (r$test == "anova") {
+        sig_pw <- r$pairwise %>% filter(adj.p.value < 0.05)
       } else {
-        r$pairwise[r$pairwise < 0.05, , drop = FALSE]
+        sig_pw <- r$pairwise[r$pairwise < 0.05, , drop = FALSE]
       }
-      if (length(sig_pw) == 0) {
+      if (nrow(sig_pw) == 0 || length(sig_pw) == 0) {
         cat("    - None\n")
       } else {
         print(sig_pw)
@@ -88,7 +81,6 @@ test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise
 # Load merged LysoTracker summary data for both cruises
 df <- read.csv("Data/AllCruiseLysoTracker.csv")
 
-
 # ---- Assess Normality for Each Biomass Variable ----
 
 # Define variables to test
@@ -96,9 +88,9 @@ biomass_vars <- c("avsyn", "avnano", "avhetero")
 
 # Perform Shapiro-Wilk test for normality on each biomass variable
 
-shapiro_results <- lapply(biomass_vars, function(biomass_vars) {
-  test <- shapiro.test(df[[biomass_vars]])
-  data.frame(variable = biomass_vars, 
+shapiro_results <- lapply(biomass_vars, function(var) {
+  test <- shapiro.test(df[[var]])
+  data.frame(variable = var, 
              W = test$statistic, 
              p.value = test$p.value)
 })
@@ -145,3 +137,4 @@ rangebac <- bacdf %>%
                    sdbac=sd(bacteria, na.rm = TRUE), 
                    maxbac=max(bacteria, na.rm = TRUE), 
                    minbac=min(bacteria, na.rm = TRUE))
+
