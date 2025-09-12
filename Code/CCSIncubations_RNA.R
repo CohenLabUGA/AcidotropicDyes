@@ -71,6 +71,7 @@ df_letters <- data %>%
   select(-.group)
 
 # Confirm with strict t-test
+shapiro.test(data$result)
 t_test <- t.test(result ~ timepoint, data = data)
 print(t_test)
 
