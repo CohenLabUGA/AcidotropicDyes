@@ -36,7 +36,7 @@ percent
 # C. Add microscopy image
 photo <- cowplot::ggdraw() + 
   cowplot::draw_image("Data/TetraZStack-1.png") +
-  cowplot::draw_label("c)", x = 0.05, y = 0.95, hjust = 0, vjust = 4, size = 14)
+  cowplot::draw_label("c)", x = 0.05, y = 0.95, hjust = 0, vjust = 9, size = 14)
 # Combine A and B into left panel
 barplots <- plot_grid(
   IR, percent,
@@ -59,7 +59,7 @@ final_figure <- plot_grid(
 print(final_figure)
 
 # Save full supplemental figure
-ggsave("Figures/SuppFig4.png", final_figure, width = 10, height = 6, dpi = 300)
+ggsave("Figures/SuppFig4.png", final_figure, width = 10, height = 8, dpi = 300)
 
 
 # ----------------------------------------------------------
