@@ -8,7 +8,7 @@ library(cowplot)
 # ----------------------------------------------------------
 # Supplemental Figure 3: Grazing bar plots + microscopy image
 # ----------------------------------------------------------
-
+set.seed(123)
 # Read and summarize ingestion rate and FLP data
 df <- read_excel("Data/SupplementalGrazing.xlsx") %>%
   group_by(Culture) %>%
@@ -36,7 +36,7 @@ percent
 # C. Add microscopy image
 photo <- cowplot::ggdraw() + 
   cowplot::draw_image("Data/TetraZStack-1.png") +
-  cowplot::draw_label("c)", x = 0.05, y = 0.95, hjust = 0, vjust =11, size = 14)
+  cowplot::draw_label("c)", x = 0.05, y = 0.95, hjust = 0, vjust = 4, size = 14)
 # Combine A and B into left panel
 barplots <- plot_grid(
   IR, percent,
