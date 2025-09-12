@@ -38,7 +38,7 @@ ggsave("Figures/SuppFig13.tiff", plot = stationtaxa, width = 6, height = 6, unit
 # Figure 6a: Effect of Fe treatments on mixotrophy (LysoTracker)
 # --------------------------------------------------------
 
-# Read and format iron incubation data
+# Read and format iron incubation data and average technical replciates
 incubations <- read_excel("Data/CCSIncubations.xlsx") %>%
   mutate(Timepoint = case_when(
     Timepoint =="T0" ~0,
@@ -48,45 +48,31 @@ incubations <- read_excel("Data/CCSIncubations.xlsx") %>%
   mutate(Treatment = case_when(
     Treatment=="control" ~ "Control"))%>%
   mutate(proportionmixos = proportionmixos *100) %>%
-  filter(Treatment=="Control")
+  filter(Treatment=="Control") %>%
+  group_by(Timepoint, Treatment, Replicate) %>%
+  dplyr::summarise(proportionmixos=mean(proportionmixos), sdpropmixos=sd(proportionmixos))
 
-# Prepare data for ANOVA 
-data <- data.frame(timepoint = as.factor(incubations$Timepoint),
-                   treatment = as.factor(incubations$Treatment),
-                   result = incubations$proportionmixos)
-
-# Perform one-way ANOVA per treatment, calculate posthoc pairwise comparisons
-df_letters <- data %>%
-  group_by(treatment) %>%
-  nest() %>% # Nest each treatment's data into its own tibble
-  rowwise() %>% # Iterate row by row so each treatment is processed independently
-  mutate(
-    fit = list(lm(result ~ timepoint, data = data)), # Fit a linear model by timepoint within each treatment (with two groups and a categorical predictor, same as t-test)
-    emm = list(emmeans::emmeans(fit, "timepoint", type = "response")), # compute estimated marginal means for each timepoint
-    cld = list(multcomp::cld(emm, Letters = LETTERS, reverse = TRUE)) # Run letter display to assign letters to timepoints based on posthoc pairwise comparisons
-  ) %>%
-  select(-data, -fit, -emm) %>%
-  unnest(cld) %>%
-  mutate(cld = trimws(.group)) %>%
-  select(-.group)
-
-# Confirm with strict t-test
-shapiro.test(data$result)
-t_test <- t.test(result ~ timepoint, data = data)
+# Test for differences
+shapiro.test(incubations$proportionmixos)
+t_test <- t.test(proportionmixos ~ Timepoint, data = incubations)
 print(t_test)
 
+# Calculate standard deviation of biological replicates for plotting
+incubationsbiorepssd <- incubations %>%
+  group_by(Treatment, Timepoint) %>%
+  dplyr::summarise(avprop=mean(proportionmixos), sdprop=sd(proportionmixos)) %>%
+  filter(Timepoint %in% c(7, 11))
+
 # Plot LysoTracker staining in iron manipulation experiments
-lysotrackerplot <- ggplot(df_letters, aes(x = timepoint, y = emmean, fill = treatment)) +
+lysotrackerplot <- ggplot(incubationsbiorepssd, aes(x = Timepoint, y = avprop, fill = Treatment)) +
   geom_bar(position = 'dodge', stat = 'identity') +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
+  geom_errorbar(aes(ymin = avprop-sdprop, ymax = avprop+sdprop),
                 position = position_dodge(.9), width = 0.2, color = "black") +
-  geom_text(aes(label = cld, y = upper.CL),
-            vjust = -0.5, position = position_dodge(0.9),
-            size = 3, color = "black") +
-  labs(x = "", y = "Percent of Grazing\nPhototrophs (LysoTracker)",fill = "Taxonomic Group") +
+  labs(x = "", y = "Percent Stained LysoTracker",fill = "Taxonomic Group") +
   theme_classic(base_size = 14) +
   scale_fill_manual(values = "gray80") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + ylim(0, 100) +
+  scale_x_continuous(breaks = c(7, 11))+
   ggtitle("a)")
 lysotrackerplot
 
@@ -109,7 +95,7 @@ alltaxa <- ggplot(taxa, aes(x=Timepoint, Treatment, y=PercentReads, fill=Taxa))+
   scale_fill_manual(values = browngreenblue) +
   theme_classic(base_size = 14)+
   ggtitle("b)")+
-  labs(x="Day of Incubation", y='% Protist Normalized Reads', fill='Taxonomic Group')+ 
+  labs(x="Day of Incubation", y='Percent Protist Normalized Reads', fill='Taxonomic Group')+ 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+  scale_x_continuous(breaks = c(7, 11)) 
 
 
