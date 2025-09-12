@@ -178,7 +178,8 @@ normalizedfscsensor <- ggplot(merged_sensor, aes(x = factor(Culture, levels=resu
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
         text = element_text(size=14) ) +
-  scale_y_log10()
+  scale_y_log10() + 
+  ylim(0,0.105)
 normalizedfscsensor
 
 # ---- Generate bar plot to show culture types in the same manner as figure 2 ----

@@ -168,7 +168,7 @@ mixoplot <- grid.arrange(
 ggsave("Figures/Figure5.tiff", plot = mixoplot, width = 14, height = 11, units = "in", dpi = 300)
 
 # ---- Save photos to be stitched to Figure 5 in illustrator ---
-# Step 1: Download photos from Zenodo into the Data folder https://zenodo.org/records/16813439 and rename folder to "Photos"
+# Step 1: Download photos from Zenodo into the Data folder https://zenodo.org/records/17108625, rename folder to "Photos", and unzip the inside files
 
 # Step 2: Load in all CCS photos and turn into grobs with a random subset of 49 photos
 ccstiffs <- list.files("Data/Photos/CCS", pattern="\\.tif$", full.names = TRUE)
