@@ -20,6 +20,7 @@ IR <- ggplot(df, aes(x=Culture, y=avingestion)) +
   geom_bar(stat = "identity", fill="gray18")+
   geom_errorbar(aes(ymin=avingestion - sdingestion, ymax=avingestion+sdingestion), width=0.3) +
   theme_bw() + 
+  ggtitle("a)")+
   labs(x="", y=expression(paste("Ingestion Rate (Bacteria ", cell^{'-1'},hour^{-1}, ")"))) 
 IR
 
@@ -28,18 +29,18 @@ percent <- ggplot(df, aes(x=Culture, y=avpercent)) +
   geom_bar(stat = "identity", fill="gray80")+
   geom_errorbar(aes(ymin=avpercent - sdpercent, ymax=avpercent+sdpercent), width=0.3) +
   theme_bw() + 
-  labs(y="Percent of Eating Cells FLP (%)") 
+  labs(y="Percent of Eating Cells FLP (%)") +
+  ggtitle("b)")
 percent
 
 # C. Add microscopy image
 photo <- cowplot::ggdraw() + 
-  cowplot::draw_image("Data/TetraZStack-1.png")
-
+  cowplot::draw_image("Data/TetraZStack-1.png") +
+  cowplot::draw_label("c)", x = 0.05, y = 0.95, hjust = 0, vjust =11, size = 14)
 # Combine A and B into left panel
 barplots <- plot_grid(
   IR, percent,
   ncol = 1,
-  labels = c("A", "B"),
   label_x = 0.1,   
   label_y = c(1., 1.05),
   align = 'v',
@@ -51,7 +52,6 @@ barplots
 final_figure <- plot_grid(
   barplots, photo,
   ncol = 2,
-  labels = c("", "C"),
   label_x = c(0, 0.02), 
   label_y = c(1, 1),
   rel_widths = c(1.1, 1)
