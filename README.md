@@ -1,7 +1,7 @@
 # Evaluating acidotropic dyes for detecting mixotrophy in protists: insights from cultures and field communities
 
 ## Project Background
-Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis, are important for nutrient cycling and the microbial food web. Unfortunately, these organisms are difficult to detect in the natural environment. This study evaluated a tool for measuring mixotrophs in aquatic environments, acidotropic dyes. These dyes are thought to bind to acidic digestion vacuoles and can be identified using flow cytometry. We test these dyes in a suite of laboratory organisms and then compare them in the field to the community standard for measuring mixotrophs, fluorescently labeled particle incubations in both the North East Shelf (NES) and California Current System (CCS). 
+Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis, are important for nutrient cycling and the microbial food web. Unfortunately, these organisms are difficult to detect in the natural environment. This study evaluated a tool for measuring mixotrophs in aquatic environments: acidotropic dyes. These dyes are thought to bind to acidic digestion vacuoles and can be identified using flow cytometry. We test these dyes in a suite of laboratory organisms and then compare them in the field alongside another tool for measuring mixotrophs: fluorescently labeled particle uptake incubations.
 
 This repository contains data and code used in the analysis of this project. 
 ## Data
