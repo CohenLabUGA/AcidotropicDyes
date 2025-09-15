@@ -35,11 +35,7 @@ test_grazing <- function(data, variables, method = "t") {
     }
     
     # Significance stars
-    significance <- if (pval < 0.001) {
-      "***"
-    } else if (pval < 0.01) {
-      "**"
-    } else if (pval < 0.05) {
+    significance <- if (pval < 0.05) {
       "*"
     } else {
       "ns"

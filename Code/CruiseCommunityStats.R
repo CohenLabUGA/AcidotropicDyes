@@ -31,11 +31,7 @@ test_biomass_by_cruise <- function(data, variables, method = "t") {
     }
     
     # Significance stars
-    significance <- if (pval < 0.001) {
-      "***"
-    } else if (pval < 0.01) {
-      "**"
-    } else if (pval < 0.05) {
+    significance <- if (pval < 0.05) {
       "*"
     } else {
       "ns"
