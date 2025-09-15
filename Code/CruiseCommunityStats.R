@@ -4,16 +4,16 @@ library(readxl)
 library(tidyr)
 library(dplyr)
 library(car)
-library(broon)
+library(broom)
 
 
 # ---- Define Function: Test Biomass Differences by Cruise ----
 # This function performs either ANOVA or Kruskal-Wallis tests across cruises
 # for each biomass-related variable provided.
-# Optionally performs post-hoc tests (Tukey HSD for ANOVA, pairwise Wilcoxon for Kruskal).
-
-test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise = TRUE) {
+test_biomass_by_cruise <- function(data, variables, method = "kruskal") {
   results <- list()
+  
+  data$Cruise <- as.factor(data$Cruise)  # ensure factor
   
   for (var in variables) {
     formula <- as.formula(paste(var, "~ Cruise"))
@@ -44,66 +44,26 @@ test_biomass_by_cruise <- function(data, variables, method = "kruskal", pairwise
       p.value = round(pval, 6),
       significance = significance
     )
-    
-    # Post-hoc pairwise testing
-    if (pairwise && method == "kruskal" && pval < 0.05) {
-      pw <- pairwise.wilcox.test(data[[var]], data$Cruise, p.adjust.method = "BH")
-      results[[var]]$pairwise <- pw$p.value
-    } else if (pairwise && method == "anova" && pval < 0.05) {
-      tukey <- TukeyHSD(test_result)
-      results[[var]]$pairwise <- broom::tidy(tukey)
-    }
   }
   
-  # Print summary
+  # Print summary once
   cat("\n--- Biomass Cruise Comparison Results ---\n")
   for (var in names(results)) {
     r <- results[[var]]
     cat(paste0(var, " (", r$test, "): p = ", r$p.value, " [", r$significance, "]\n"))
-    if (!is.null(r$pairwise)) {
-      cat("    Significant pairwise differences:\n")
-      if (r$test == "anova") {
-        sig_pw <- r$pairwise %>% filter(adj.p.value < 0.05)
-      } else {
-        sig_pw <- r$pairwise[r$pairwise < 0.05, , drop = FALSE]
-      }
-      if (nrow(sig_pw) == 0 || length(sig_pw) == 0) {
-        cat("    - None\n")
-      } else {
-        print(sig_pw)
-      }
-    }
   }
+  
   return(invisible(results))
 }
-
-# ---- Read and Prepare Data ----
-# Load merged LysoTracker summary data for both cruises
-df <- read.csv("Data/AllCruiseLysoTracker.csv")
-
-# ---- Assess Normality for Each Biomass Variable ----
-
-# Define variables to test
-biomass_vars <- c("avsyn", "avnano", "avhetero")
-
-# Perform Shapiro-Wilk test for normality on each biomass variable
-
-shapiro_results <- lapply(biomass_vars, function(var) {
-  test <- shapiro.test(df[[var]])
-  data.frame(variable = var, 
-             W = test$statistic, 
-             p.value = test$p.value)
-})
-
 # Combine Shapiro results into one data frame
 shapiro_df <- do.call(rbind, shapiro_results)
 print(shapiro_df)
-
+# All data is not normal, running non-parametric tests (Kruskal-Wallis)
 # ---- Run Kruskal-Wallis Tests Across Cruises ----
 
 # Use nonparametric Kruskal-Wallis test (since variables are not normal)
 test_biomass_by_cruise(df, biomass_vars, method = "kruskal")
-
+#kruskal-wallis is run for each biomass variable defined and reports if it's significantly different between NES and CCS cruises
 
 # ---- Bacteria Analysis (Separate File) ----
 
