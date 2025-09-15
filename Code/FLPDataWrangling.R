@@ -48,9 +48,9 @@ merged_df <- merge(calcpercent, bac, by = merge_columns)
 
 # ---- Calculate grazing metrics (CSGR and nanoBR), then summarize across replicates ----
 nesgrazing <- merged_df %>%
-  mutate(CSGR=((submixoconc/avnano) * (bacteria/(10^5)))) %>%
-  mutate(nanoBR = ((submixoconc/avnano * submixoconc * (bacteria/10^5))))%>%
+  mutate(CSGR=(((submixoconc/avnano)/1) * (bacteria/(10^5)))) %>% # dividing submixoconc/avnano by 1 accounts for the 1 hour incubation
   mutate(loggrazing=log10(CSGR))%>%
+  mutate(nanoBR = (CSGR * submixoconc))%>% 
   group_by(Station, Place) %>%
   dplyr::summarise(avconc=mean(submixoconc), sdconc=sd(submixoconc), 
                    avpercent=mean(percentmixo), sdpercent=sd(percentmixo), 
@@ -102,18 +102,47 @@ nesgrazing <- nesflpgrazing %>%
 # PART 2: PROCESS CCS DATA
 # ========================
 # ---- Load, calculate, and summarize CCS FLP data ----
-ccsgrazing <- read_excel("Data/CCSRawFLP.xlsx") %>%
+# Step 1: calculate the subtracted T1-T0 values for mixotrophs
+ccssubtracted <- read_excel("Data/CCSRawFLP.xlsx") %>%
   group_by(Station) %>%
-  mutate(CSGR=(mixo_cellsmL/red_cellsmL) * (bacteria/(10^5))) %>%
-  mutate(nanoBR = ((mixo_cellsmL/red_cellsmL) * mixo_cellsmL * (bacteria/10^5)))%>%
+  group_by(Station, Timepoint, Replicate) %>%
+  pivot_wider(id_cols=c(Station, Replicate),
+              names_from=Timepoint, 
+              values_from=c(mixo_cellsmL, percentmixo)) %>%
+  mutate(subpercentmixo=(percentmixo_T1-percentmixo_T0), 
+         submixoconc=(mixo_cellsmL_T1-mixo_cellsmL_T0)) %>%
+  dplyr::select(Station, Replicate, subpercentmixo, submixoconc)
+
+# Step 2: Calculate nanoeukaryote values
+ccsnanoeukaryotes <- read_excel("Data/CCSRawFLP.xlsx") %>%
+  group_by(Station, Replicate) %>%
+  dplyr::summarise(nanoeukconcentration=mean(red_cellsmL+mixo_cellsmL))
+
+# Step 3: load in bacteria concentrations
+ccsbacteria <- read_excel("Data/BacteriaConcentrations.xlsx") %>%
+  filter(Cruise =="California Current System") %>%
+  filter(Depth<11.9) %>% #Include only surface depths
+  group_by(Station) %>%
+  dplyr::summarise(bacteria=mean(bacteria))
+ccsbacteria$Station <- as.numeric(ccsbacteria$Station)
+
+# Step 4: Merge dataframes together
+ccsmicroscopedata <- left_join(ccssubtracted, ccsnanoeukaryotes, by=c("Station", "Replicate"))
+ccsmicroscopedata <- left_join(ccsmicroscopedata, ccsbacteria, by=c("Station"))
+
+# Step 5: Calculate grazing metrics
+ccsgrazing <- ccsmicroscopedata %>%
+  mutate(CSGR=((submixoconc/nanoeukconcentration)/1) * (bacteria/(10^5))) %>% #Divided by incubation time in hours (1)
+  mutate(nanoBR = CSGR * submixoconc)%>%
   mutate(loggrazing=log10(CSGR)) %>%
+  group_by(Station) %>%
+  na.omit() %>%
   dplyr::summarise(
-    avbac=mean(bacteria), sdbac=sd(bacteria), 
-    avpercent=mean(percentmixo), sdpercent=sd(percentmixo),
-    avconc=mean(mixo_cellsmL), sdconc=sd(mixo_cellsmL), 
+    avpercent=mean(subpercentmixo), sdpercent=sd(subpercentmixo),
+    avconc=mean(submixoconc), sdconc=sd(submixoconc), 
     avloggrazing=mean(loggrazing), sdloggrazing=sd(loggrazing), 
     avgrazing=mean(CSGR), sdgrazing=sd(CSGR), 
-    avnano=mean(red_cellsmL), sdnano=sd(red_cellsmL), 
+    avnano=mean(nanoeukconcentration), sdnano=sd(nanoeukconcentration), 
     avnanoBR = mean(nanoBR), sdnanoBR=sd(nanoBR)) %>%
   mutate(Cruise = "California Current System") %>%
   mutate(Depth="Surface") 
