@@ -83,7 +83,7 @@ nesflpgrazing <- rbind(nesgrazing, blankstationsNES)
 nesflpgrazing$Method <- "fcm"
 
 # ---- Load and summarize microscopy-based FLP data ----
-nesmicroscope <- read_excel("Data/NES_FLP_MicroscopyB.xlsx") %>%
+nesmicroscope <- read_excel("Data/NES_FLP_Microscopy.xlsx") %>%
   group_by(Depth, Station) %>%
   na.omit() %>%
   dplyr::summarise(microscopepercent=(mean(percentchange)), sdmicroscopepercent=(sd(percentchange)))
