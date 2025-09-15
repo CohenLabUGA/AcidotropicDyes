@@ -11,68 +11,57 @@ library(multcomp)
 
 
 # ---- Define Function: Test Biomass Differences by Cruise ----
-# This function performs either ANOVA or Kruskal-Wallis tests across cruises
+# This function performs either t-test or Wilcoxon tests across cruises
 # for each biomass-related variable provided.
-# Optionally performs post-hoc tests (Tukey HSD for ANOVA, pairwise Wilcoxon for Kruskal).
 
-test_grazing <- function(data, variables, method = "kruskal", pairwise = TRUE) {
+test_grazing <- function(data, variables, method = "t") {
   results <- list()
   
   for (var in variables) {
-    formula <- as.formula(paste(var, "~ Cruise"))
+    y <- data[[var]]
+    grp <- data$Cruise
     
-    test_result <- switch(method,
-                          "anova"   = aov(formula, data = data),
-                          "kruskal" = kruskal.test(formula, data = data)
-    )
-    
-    pval <- if (method == "anova") {
-      summary(test_result)[[1]][["Pr(>F)"]][1]
+    # Choose test
+    if (method == "t") {
+      test_result <- t.test(y ~ grp)
+      pval <- test_result$p.value
+      test_used <- "t-test"
+    } else if (method == "wilcox") {
+      test_result <- wilcox.test(y ~ grp)
+      pval <- test_result$p.value
+      test_used <- "Wilcoxon rank-sum"
     } else {
-      test_result$p.value
+      stop("method must be either 't' or 'wilcox'")
     }
     
-    significance <- case_when(
-      pval < 0.001 ~ "***",
-      pval < 0.01  ~ "**",
-      pval < 0.05  ~ "*",
-      TRUE         ~ "ns"
+    # Significance stars
+    significance <- if (pval < 0.001) {
+      "***"
+    } else if (pval < 0.01) {
+      "**"
+    } else if (pval < 0.05) {
+      "*"
+    } else {
+      "ns"
+    }
+    
+    # Save results
+    results[[var]] <- list(
+      test = test_used,
+      p.value = round(pval, 6),
+      significance = significance
     )
-    
-    results[[var]] <- list(test = method,
-                           p.value = round(pval, 6),
-                           significance = significance)
-    
-    if (pairwise && pval < 0.05) {
-      results[[var]]$pairwise <- switch(method,
-                                        "anova"   = TukeyHSD(test_result)$Cruise,
-                                        "kruskal" = pairwise.wilcox.test(data[[var]], data$Cruise, p.adjust.method = "BH")$p.value
-      )
-    }
   }
   
   # Print summary
   cat("\n--- Biomass Cruise Comparison Results ---\n")
-  walk2(names(results), results, function(var, r) {
-    cat(sprintf("%s (%s): p = %.3g [%s]\n", var, r$test, r$p.value, r$significance))
-    if (!is.null(r$pairwise)) {
-      cat("    Significant pairwise differences:\n")
-      sig_pw <- if (r$test == "anova") {
-        r$pairwise[r$pairwise[, "p adj"] < 0.05, , drop = FALSE]
-      } else {
-        r$pairwise[r$pairwise < 0.05, , drop = FALSE]
-      }
-      if (length(sig_pw) == 0) {
-        cat("    - None\n")
-      } else {
-        print(sig_pw)
-      }
-    }
-  })
+  for (var in names(results)) {
+    r <- results[[var]]
+    cat(paste0(var, " (", r$test, "): p = ", r$p.value, " [", r$significance, "]\n"))
+  }
   
   return(invisible(results))
 }
-
 # ---- Read and Prepare Data ----
 flp_all <- read_excel("Data/AllFLPData.xlsx")
 
@@ -85,6 +74,7 @@ flpmicroscopy <- flp_all %>% filter(Cruise == "California Current System" |
 nesflp <- flp_all %>% filter(Cruise == "North East Shelf")
 lysodf <- read.csv("Data/AllCruiseLysoTracker.csv")
 
+# All data are not normal, using Wilcox tests for all
 # ---- Normality Testing ----
 check_normality <- function(data, vars) {
   map_dfr(vars, ~{
@@ -101,10 +91,10 @@ print(shapiro_flpfcm)
 print(shapiro_flpmicroscopy)
 print(shapiro_lysotracker)
 
-# ---- Run Kruskal-Wallis Tests ----
-test_grazing(flpfcm, c("avpercent", "avconc", "avgrazing", "avnoBR"), method = "kruskal") # For NES FCM and CCS microscopy
-test_grazing(flpmicroscopy, c("avpercent", "avgrazing"), method = "kruskal") #For NES microscopy and CCS microscopy
-test_grazing(lysodf, c("avmixo", "avpercent"), method = "kruskal") # For LysoTracker values
+# ---- Run Wilcox Tests ----
+test_grazing(flpfcm, c("avpercent", "avconc", "avgrazing", "avnoBR"), method = "wilcox") # For NES FCM and CCS microscopy
+test_grazing(flpmicroscopy, c("avpercent", "avgrazing"), method = "wilcox") #For NES microscopy and CCS microscopy
+test_grazing(lysodf, c("avmixo", "avpercent"), method = "wilcox") # For LysoTracker values
 
 # Test to see if FLP NES methods are significantly different
 print(kruskal.test(avgrazing ~ Method, data = nesflp))
