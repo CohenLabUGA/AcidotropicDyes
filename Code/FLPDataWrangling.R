@@ -29,7 +29,7 @@ avnano <- nesflpfcm %>%
 
 # ---- Compute change in mixotroph abundance from T0 to T1 (submixoconc) ----
 submixoconc <- nesflpfcm %>%
-  filter(Type=="Green") %>%
+  filter(Type=="Green") %>% # Filter for only bead prey, called "Green" in this dataset
   group_by(Station, Place, Timepoint, Rep, Time) %>%
   pivot_wider(id_cols=c(Station, Place, Type, Rep, Time),
               names_from=Timepoint, 
@@ -39,7 +39,7 @@ submixoconc <- nesflpfcm %>%
 # ---- Merge and calculate percent mixotroph contribution ----
 calcpercent <- avnano %>%
   left_join(submixoconc, by=c("Station", "Place", "Time")) %>%
-  mutate(percentmixo=(submixoconc/(avnano)*100)) 
+  mutate(percentmixo=(submixoconc/(avnano)*100)) # avnano represents all nanoeukaryotes, including mixotrophs
 
 # ---- Add bacterial data ----
 bac  <- read_excel("Data/NESBacteria.xlsx")
