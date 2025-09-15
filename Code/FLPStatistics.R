@@ -97,7 +97,7 @@ test_grazing(flpmicroscopy, c("avpercent", "avgrazing"), method = "wilcox") #For
 test_grazing(lysodf, c("avmixo", "avpercent"), method = "wilcox") # For LysoTracker values
 
 # Test to see if FLP NES methods are significantly different
-print(kruskal.test(avgrazing ~ Method, data = nesflp))
+print(wilcox.test(avgrazing ~ Method, data = nesflp))
 
 # Calculate ranges, averages, and standard deviations for variables in the FLP dataframe
 flpdf <- read_excel("Data/AllFLPData.xlsx")
