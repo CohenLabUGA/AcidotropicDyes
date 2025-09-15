@@ -92,14 +92,14 @@ supp2table <- data %>%
   gt() %>%
   tab_spanner(label = "Gain and Voltage Settings",
     columns = c(
-      `Guava Gain (Culture Tests & NES FLP)`,
-      `LysoTracker CCS Cruise`,
-      `LysoTracker NES Cruise`,
-      `Culture Tests CytPix Voltage (V)`)) %>%
+      `Guava Gain - Culture Tests & NES FLP`,
+      `Guava Gain - LysoTracker CCS`,
+      `Guava Gain - LysoTracker NES`,
+      `CytPix Voltage - Culture Tests`)) %>%
   tab_spanner(label = "Detection Wavelengths",
     columns = c(
-      `Wavelength CytPix (nm)`,
-      `Wavelength Guava (nm)`)) %>%
+      `CytPix Wavelength (nm)`,
+      `Guava Wavelength (nm)`)) %>%
   fmt_missing(
     columns = everything(),
     missing_text = "—") %>%
@@ -111,4 +111,4 @@ supp2table <- data %>%
 
 supp2table
 
-gtsave(supp2table, filename = "Figures/SuppTable2.png", vwidth = 1500, vheight = 3200, zoom = 3)
+gtsave(supp2table, filename = "Figures/SuppTable2.png", vwidth = 1000, vheight = 3200, zoom = 3)
