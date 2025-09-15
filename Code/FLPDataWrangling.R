@@ -72,7 +72,6 @@ blankstationsNES <- data.frame(
   avconc=NA, sdconc=NA, 
   avloggrazing=NA, sdloggrazing=NA, 
   avpercent=NA, sdpercent=NA, 
-  avnano=NA, sdnano=NA,
   avnanoBR=NA, sdnanoBR=NA, 
   Cruise="North East Shelf", 
   Depth="Surface")
@@ -84,19 +83,17 @@ nesflpgrazing <- rbind(nesgrazing, blankstationsNES)
 nesflpgrazing$Method <- "fcm"
 
 # ---- Load and summarize microscopy-based FLP data ----
-nesmicroscope <- read_excel("Data/NES_FLP_Microscopy.xlsx") %>%
+nesmicroscope <- read_excel("Data/NES_FLP_MicroscopyB.xlsx") %>%
   group_by(Depth, Station) %>%
-  mutate(IR = (NumMixo/NanoEuk)) %>%
-  dplyr::summarise(microscopepercent=(mean(PercentMixo)), sdmicroscopepercent=(sd(PercentMixo)), 
-                   avIR=mean(IR), sdIR=sd(IR), 
-                   microscopemixo=mean(NumMixo), sdmicroscopemixo=sd(NumMixo))
+  na.omit() %>%
+  dplyr::summarise(microscopepercent=(mean(percentchange)), sdmicroscopepercent=(sd(percentchange)))
+                   
 nesmicroscope$Method <- "Microscopy"
 
 # ---- Join microscopy and FCM data, calculate additional microscopy-derived metrics ---
 nesgrazing <- nesflpgrazing %>%
   left_join(nesmicroscope, by=c("Station", "Depth")) %>%
-  mutate(microscopeGR =  (avIR * (avbac/(10^5))), 
-         microscopeBR = (avIR * microscopemixo * (avbac/(10^5))))
+  mutate(microscopeGR =  (microscopepercent * (avbac/(10^5))))
 
 # ========================
 # PART 2: PROCESS CCS DATA
