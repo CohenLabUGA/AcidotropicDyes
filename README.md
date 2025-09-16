@@ -5,7 +5,7 @@ Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis
 
 This repository contains data and code used in the analysis of this project. 
 ## Data
-All raw and processed dataframes used in this analysis are hosted in the folder [Data](https://github.com/CohenLabUGA/AcidotropicDyes/tree/main/Data)
+All raw and processed dataframes used in this analysis are hosted in the folder [Data](https://github.com/CohenLabUGA/AcidotropicDyes/tree/main/Data). For more detailed insights into the columns present in each dataframe see the readme inside the Data folder. 
 
 Raw data of culture staining with acidotropic dyes can be found in [CultureLysoData.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CultureLysoData.xlsx). This file has tabs for LysoTracker, LysoSensor, and Fluorescence. LysoTracker & LysoSensor staining data were used for Figure 2 and Supplemental Table 2. Fluorescence data were used for Figure 3 and Supplemental Table 4. Table 1, detailing the culture conditions, was created using the dataset available at [this](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/Table1.xlsx) location. Data for staining with acidotropic dyes during various growth phases, as in Supplemental Figure 1, can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/StainingGrowthPhases.xlsx).
 
@@ -17,7 +17,7 @@ Flow cytometer settings as reported in Supplemental Table 2 can be found [here](
 
 For the CCS transect, RNA data and incubation experiments were also conducted. The RNA taxonomy information can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CubiTaxa.xlsx) for the incubation experiment and [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/station_protist_taxonomy.csv) for the stations. RNA and nutrient data were part of a larger sampling scheme and are detailed further in [Speciale, 2025](https://cdr.lib.unc.edu/concern/dissertations/3j333h201?locale=en).  Nutrient and community data for the incubation experiment can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CCSIncubations.xlsx). These data were used to make Figure 6 and Supplemental Figures 12 and 13. Percent of reads that were mapped and annotated can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/PUPCYCLE_Reads_Stats.xlsx), which was used to make Supplemental Figure 8.
 
-Finally, the data necessary for Supplemental Figures 3 and 4 demonstrating grazing in mixotrophs is [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx) with tabs for both Tetraselmis spp. and the Southern Ocean mixotrophs, with the z-stack image in Supplemental Figure 3 [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/TetraZStack-1.png)
+Finally, the data necessary for Supplemental Figures 3 and 4 demonstrating grazing in mixotrophs is [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx) with tabs for both Tetraselmis spp. (Tetraselmis) and the Southern Ocean mixotrophs (SOmixos). Tabs with the raw calculations for grazing are also present in this sheet, with raw data for the Tetraselmis FLP counts (Raw_TetraselmisFLP), Tetraselmis prey removal (Raw_TetraselmisPreyRemoval), and Southern Ocean mixotroph prey removal (Raw_SOmixoPreyRemoval). The z-stack image in Supplemental Figure 3 [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/TetraZStack-1.png). 
 ## R Scripts
 Various R scripts were created within an R project to process data, generate Figures, and perform statistical analyses. 
 
@@ -25,18 +25,14 @@ Maps of each cruise transect seen in Figure 1 were made using [Maps.R](https://g
 
 Tables 1 and Supplemental Tables 1, 2, and 3 were created using [Tables.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/Tables.R)
 
-Acidotropic dye staining of cultures seen in Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R). Staining during different growth phases, as seen in Supplemental Figure 1, is plotted in [GrowthPhaseStaining.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/GrowthPhaseStaining.R).
+Acidotropic dye staining of cultures seen in Figure 2 was made using [LysoBarPlot.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/LysoBarPlot.R). Staining during different growth phases, as seen in Supplemental Figure 1, is plotted in [GrowthPhaseStaining.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/GrowthPhaseStaining.R). Supplemental grazing data for the mixotrophs (Supplemental Figures 3 and 4) were plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R).
 
 Fluorescence data seen in Figure 3 and Supplemental Table 4 were made using [FluorescenceTable.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FluoresenceTable.R)
 
-FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPDataWrangling.R), and LysoTracker data was processed for the CCS cruise using [CCS_LysoTrackerProcess.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCS_LysoTrackerProcess.R) and for the NES cruise [NES_LysoTracker_Process.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_LysoTracker_Process.R). 
+FLP data was processed using [FLPDataWrangling.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPDataWrangling.R), and LysoTracker data was processed for the CCS cruise using [CCS_LysoTrackerProcess.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCS_LysoTrackerProcess.R) and for the NES cruise [NES_LysoTracker_Process.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_LysoTracker_Process.R). Prey type on the NES cruise (Supplemental Figure 6) was compared using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R).
 
 Community composition on each cruise, seen in Figure 4 was plotted using [CommunityDepth.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CommunityDepth.R) with statistics run in [CruiseCommunityStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CruiseCommunityStats.R). 
 
 Mixotroph proportions, concentrations, and grazing on both cruises found in Figures 5 and Supplemental Figures 9, 10, and 11 were plotted using [MixotrophGraphs.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/MixotrophGraphs.R). Significant differences were calculated in the file [FLPStatistics.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/FLPStatistics.R). 
 
 CCS incubation experiments and RNA data for the CCS cruise, seen in Figures 6, Supplemental Figure 12, and Supplemental Figure 13, were plotted using [CCSIncubations_RNA.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/CCSIncubations_RNA.R). Percent of reads mapped and annotated (Supplemental Figure 8) was analyzed using [ReadStats.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/ReadStats.R).
-
-
-Finally, Supplemental grazing data for the mixotrophs (Supplemental Figures 3 and 4) was plotted using [SupplementalGrazing.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/SupplementalGrazing.R), and prey type comparisons on the NES cruise (Supplemental Figure 6) were plotted using [NES_preycomparisons.R](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Code/NES_preycomparisons.R). 
-
