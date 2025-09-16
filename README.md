@@ -5,7 +5,7 @@ Mixotrophic organisms, those that can employ both phagotrophy and photosynthesis
 
 This repository contains data and code used in the analysis of this project. 
 ## Data
-All raw and processed dataframes used in this analysis are hosted in the folder [Data](https://github.com/CohenLabUGA/AcidotropicDyes/tree/main/Data). For more detailed insights into the columns present in each dataframe see the readme inside the Data folder. 
+All raw and processed dataframes used in this analysis are hosted in the folder [Data](https://github.com/CohenLabUGA/AcidotropicDyes/tree/main/Data). For more detailed insights into the columns present in each dataframe see the [readme](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/1_DataREADME.md) inside the Data folder. 
 
 Raw data of culture staining with acidotropic dyes can be found in [CultureLysoData.xlsx](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/CultureLysoData.xlsx). This file has tabs for LysoTracker, LysoSensor, and Fluorescence. LysoTracker & LysoSensor staining data were used for Figure 2 and Supplemental Table 2. Fluorescence data were used for Figure 3 and Supplemental Table 4. Table 1, detailing the culture conditions, was created using the dataset available at [this](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/Table1.xlsx) location. Data for staining with acidotropic dyes during various growth phases, as in Supplemental Figure 1, can be found [here](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/StainingGrowthPhases.xlsx).
 
