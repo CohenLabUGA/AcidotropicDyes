@@ -14,10 +14,10 @@ library(patchwork)
 
 # ---- Load raw fluorescence data ----
 # Sheet contains mean and peak fluorescence for individual replicates
-data <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
+data <- read_excel("Data/CultureLysoData.xlsx", sheet="Fluoresence") %>%
   filter(Stain %in% c("Control", "Tracker"))
 
-sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="LysoTrackerFluoresence") %>%
+sensordata <- read_excel("Data/CultureLysoData.xlsx", sheet="Fluoresence") %>%
   filter(Stain %in% c("Control", "Sensor"))
 
 # ---- Load and summarize acidotropic dye staining data ----
