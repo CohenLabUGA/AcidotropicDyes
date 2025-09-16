@@ -18,64 +18,33 @@ library(stringr)
 # calculating mixotroph percent and nanoeukaryote concentrations
 # ----------------------------------------------
 df <- read_excel("Data/NES_FLP_FCM.xlsx") %>%
-  mutate(Timepoint = factor(Timepoint),
-         percentmixo = mixo / (nano + mixo),
-         totalnano = nano + mixo)
+  mutate(Timepoint = factor(Timepoint))
 
 # ----------------------------------------------
-# Step 2: Summarize percent mixotrophs by groups
-# Only for "Ecoli" and "Green" types. Green = microspheres
-# ----------------------------------------------
-summdata <- df %>%
-  filter(Type %in% c("Ecoli", "Green")) %>%
-  group_by(Place, Station, Time, Type, Timepoint) %>%
-  dplyr::summarise(
-    avpercent = mean(percentmixo),
-    sdpercent = sd(percentmixo),
-    .groups = "drop")
-
-# ----------------------------------------------
-# Step 3: Calculate T1 - T0 change per replicate
-# (delta change in percent mixotrophs between timepoints 1 and 0)
-# ----------------------------------------------
-allcalc <- df %>%
-  filter(Type %in% c("Ecoli", "Green")) %>%
-  group_by(Station, Place, Time, Type, Rep) %>%
-  filter(all(c(0, 1) %in% Timepoint)) %>%
-  pivot_wider(names_from = Timepoint, values_from = percentmixo) %>%
-  dplyr::summarise(
-    avpercent = mean(`1` - `0`, na.rm = TRUE),
-    sdpercent = sd(`1` - `0`, na.rm = TRUE),
-    .groups = "drop")
-
-# ----------------------------------------------
-# Step 4: Summarize data for Day/Night plots averaged over replicates
+# Step 2: Summarize data for Day/Night plots averaged over replicates
 # ----------------------------------------------
 daynight <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
   group_by(Station, Type, Place, Timepoint) %>%
   dplyr::summarise(
-    avpercent = mean(percentmixo),
-    sdpercent = sd(percentmixo),
     avmixo = mean(mixo),
     sdmixo = sd(mixo),
     .groups = "drop")
 
-
 # ----------------------------------------------
-# Step 5: Calculate average nanoeukaryote abundance (excluding Timepoint 2)
+# Step 3: Calculate average nanoeukaryote abundance (excluding Timepoint 2)
 # ----------------------------------------------
 avnano <- df %>%
   filter(Timepoint != 2, Type %in% c("Ecoli", "Green")) %>%
+  mutate(totalnano=nano+mixo) %>%
   group_by(Station, Type, Place) %>%
   dplyr::summarise(
     avnano = mean(totalnano),
     sdnano = sd(totalnano),
     .groups = "drop")
 
-
 # ----------------------------------------------
-# Step 6: Calculate T1-T0 difference in mixotroph abundance and percent contribution
+# Step 4: Calculate T1-T0 difference in mixotroph abundance and percent contribution
 # ----------------------------------------------
 daynightsub <- df %>%
   filter(Type %in% c("Ecoli", "Green"), Station != 0) %>%
@@ -92,7 +61,7 @@ daynightsub <- df %>%
   drop_na()
 
 # ----------------------------------------------
-# Step 7: Relabel Type and Place factors for consistency
+# Step 5: Relabel Type and Place factors for consistency
 # ----------------------------------------------
 relabeller <- function(x) {
   dplyr::recode(x,
@@ -111,9 +80,8 @@ daynightsub <- daynightsub %>%
     Type = relabeller(Type),
     Place = relabeller(Place))
 
-
 # ----------------------------------------------
-# Step 8: Create the plot
+# Step 6: Create the plot
 # ----------------------------------------------
 coeff <- 40 # scaling factor for secondary axis
 
@@ -139,6 +107,6 @@ suppfig6 <- ggplot(daynight, aes(x = Place, y = avmixo, fill = Timepoint)) +
 
 
 # ----------------------------------------------
-# Step 9: Save the plot
+# Step 7: Save the plot
 # ----------------------------------------------
 ggsave("Figures/SuppFig6.tiff", suppfig6, width = 10, height = 6, dpi = 300)
