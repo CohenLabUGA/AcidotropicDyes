@@ -232,6 +232,7 @@
 - avmixo/sdmixo - average and standard deviation across biological replicates for mixotrophic nanoeukaryote concentrations (cells/mL)
 
 19.[PUPCYCLE_Reads_Stats](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/PUPCYCLE_Reads_Stats.xlsx)
+
 *Tab: Incubation*
 - Sample ID - Internal identifier for samples
 - Timepoint - T2 or T3, indicates sampling timepoint of the incubation
@@ -263,6 +264,7 @@
 - Std - standard deviation of cells stained by the acidotropic dye
 
 21.[StationData](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/StationData.xlsx)
+
 *Tab: NES*
 - Site - Station along the transect
 - Latitude - latitude in degrees north 
@@ -274,6 +276,7 @@
 - Station - Station along the transect
 
 22.[SupplementalGrazing](https://github.com/CohenLabUGA/AcidotropicDyes/blob/main/Data/SupplementalGrazing.xlsx)
+
 *Tab: Tetraselmis*
 - Culture - name of species 
 - Replicate - Biological replicate (A,B or C)
