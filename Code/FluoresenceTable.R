@@ -142,7 +142,7 @@ gtsave(supptablefluorescence, filename = "Figures/SuppTable4.png", vwidth = 1800
 # PART 4: Generate Fluorescence Change Plot
 # =========================================
 # ---- Scatter plot of mean fluorescence change vs percent stained ----
-resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
+resultsorder <- c("P. subcurvata ", "Chaetoceros sp.", "F. cylindrus", "Chaetoceros sp. 02", 'Odontella sp.', 'Chaetoceros sp. 12', 'Chaetoceros sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
 
 
 normalizedfsctracker <- ggplot(merged_data, aes(x = factor(Culture, levels=resultsorder), y = (normalizedgreen+.001), color=percent)) +

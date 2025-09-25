@@ -9,7 +9,7 @@ library(ggpubr)
 library(tidyr)
 
 # Create custom order for cultures to appear in
-ordered_names <- c("Chaetocerous sp", "P. subcurvata", "F. cylindrus", "Chaetocerous sp 02", "Chaetocerous sp 12", "Odontella sp", "Chaetocerous sp 22", "O. rostrata", "G. huxleyi", "G. oceanica", "Tetraselmis sp.", "T. chuii", "Chlamydomonas sp.", "M. antarctica", "P. tychotreta", "G. cryophilia")
+ordered_names <- c("Chaetoceros sp", "P. subcurvata", "F. cylindrus", "Chaetoceros sp 02", "Chaetoceros sp 12", "Odontella sp", "Chaetoceros sp 22", "O. rostrata", "G. huxleyi", "G. oceanica", "Tetraselmis sp.", "T. chuii", "Chlamydomonas sp.", "M. antarctica", "P. tychotreta", "G. cryophilia")
 
 # Read in dataframe and format for plotting
 df <- read_excel("Data/StainingGrowthPhases.xlsx") %>%

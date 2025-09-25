@@ -17,7 +17,7 @@ library(gt)
 # PART 1: Define Culture Order and Colors
 # ========================================
 # ---- Order of cultures for x-axis display ----
-resultsorder <- c("P. subcurvata ", "Chaetocerous sp.", "F. cylindrus", "Chaetocerous sp. 02", 'Odontella sp.', 'Chaetocerous sp. 12', 'Chaetocerous sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
+resultsorder <- c("P. subcurvata ", "Chaetoceros sp.", "F. cylindrus", "Chaetoceros sp. 02", 'Odontella sp.', 'Chaetoceros sp. 12', 'Chaetoceros sp. 22', 'P. tricornutum', 'O. rostrata', 'G. oceanica', 'G. huxleyi', 'Tetraselmis sp.', 'T. chui', 'Chlamydomonas sp.', 'M. polaris', 'P. tychotreta', 'M. antarctica', 'G. cryophilia')
 
 # ---- Assign consistent colors by phytoplankton group ----
 color <- c("Diatom"= "#CAB2D6", 
@@ -127,7 +127,7 @@ combined_df <- bind_rows(trackerdata_mod, sensordata_mod) %>%
 # Add in the range of cell concentrations 
 cellconcrange <- read_excel("Data/CultureLysoData.xlsx") %>%
   group_by(Name) %>%
-  dplyr::summarise(cellrange = paste0(round(min(MixoConc, na.rm = TRUE), -1), " – ", round(max(MixoConc, na.rm = TRUE), -1)))
+  dplyr::summarise(cellrange = paste0(round(min(CellConcentration, na.rm = TRUE), -1), " – ", round(max(CellConcentration, na.rm = TRUE), -1)))
 
 
 # Pivot dataframe wider 
